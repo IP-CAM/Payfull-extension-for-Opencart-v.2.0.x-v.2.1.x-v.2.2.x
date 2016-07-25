@@ -11,7 +11,7 @@
     <div class="form-group required">
       <label class="col-sm-2 control-label" for="input-cc-number"><?php echo $entry_cc_number; ?></label>
       <div class="col-sm-6">
-        <input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input-cc-number" class="form-control" />
+        <input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input-cc-number" class="input-cc-number-not-supported form-control" />
       </div>
       <div class="col-sm-4"></div>
     </div>
@@ -68,8 +68,28 @@
 </div>
 <script type="text/javascript"><!--
 
-$('#input-cc-number').on('change', function(){
+  var cardNumberFiledSelector = $('#input-cc-number');
+  cardNumberFiledSelector.on('change keyup keydown', function(){
+    var number = $(this).val();
+    cardNumberFiledSelector.removeClass('input-cc-number-not-supported');
 
+    var re_visa = new RegExp("^4");
+    var re_master = new RegExp("^5[1-5]");
+    if (number.match(re_visa) != null){
+      cardNumberFiledSelector.addClass('input-cc-number-visa');
+      cardNumberFiledSelector.removeClass('input-cc-number-master');
+    }else if (number.match(re_master) != null){
+      cardNumberFiledSelector.removeClass('input-cc-number-visa');
+      cardNumberFiledSelector.addClass('input-cc-number-master');
+    }else{
+      cardNumberFiledSelector.removeClass('input-cc-number-visa');
+      cardNumberFiledSelector.removeClass('input-cc-number-master');
+      cardNumberFiledSelector.addClass('input-cc-number-not-supported');
+    }
+
+  });
+
+  cardNumberFiledSelector.on('change', function(){
   $.ajax({
     url: 'index.php?route=payment/payfull/get_card_info',
     type: 'post',
@@ -166,3 +186,21 @@ $('#button-confirm').bind('click', function() {
   });
 });
 //--></script>
+
+<style>
+  .input-cc-number-visa {
+    background: rgba(0, 0, 0, 0) url("<?php echo $visa_img_path; ?>") no-repeat scroll right center / 12% auto;
+    float: left;
+  }
+
+  .input-cc-number-master {
+    background: rgba(0, 0, 0, 0) url("<?php echo $master_img_path; ?>") no-repeat scroll right center / 12% auto;
+    float: left;
+  }
+
+  .input-cc-number-not-supported {
+    background: rgba(0, 0, 0, 0) url("<?php echo $not_supported_img_path; ?>") no-repeat scroll right center / 4% auto;
+    float: left;
+  }
+
+</style>

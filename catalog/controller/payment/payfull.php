@@ -44,7 +44,18 @@ class ControllerPaymentPayfull extends Controller {
 		$data['text_3d'] = $this->language->get('text_3d');
 		$data['text_installments'] = $this->language->get('text_installments');
 		$data['text_wait'] = $this->language->get('text_wait'); 
-		$data['text_loading'] = $this->language->get('text_loading'); 
+		$data['text_loading'] = $this->language->get('text_loading');
+
+        if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
+            $base_url = $this->config->get('config_ssl');
+        } else {
+            $base_url = $this->config->get('config_url');
+        }
+
+		$data['visa_img_path']   = $base_url.'image/payfull/payfull_creditcard_visa.png';
+		$data['master_img_path'] = $base_url.'image/payfull/payfull_creditcard_master.png';
+		$data['not_supported_img_path'] = $base_url.'image/payfull/payfull_creditcard_not_supported.png';
+
 
 		//for opencart less than 2.x
 		/*if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/payfull.tpl')) {
