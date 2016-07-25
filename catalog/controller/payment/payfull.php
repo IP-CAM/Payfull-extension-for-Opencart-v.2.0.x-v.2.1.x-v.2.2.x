@@ -7,20 +7,27 @@ class ControllerPaymentPayfull extends Controller {
 		
 		$data['button_confirm'] = $this->language->get('button_confirm');
 
-		$data['month_valid'] = array();
+		$data['month_valid'] = [];
+		$data['month_valid'][] = [
+			'text' => $this->language->get('entry_cc_month'),
+			'value' =>''
+		];
 
 		for ($i = 1; $i <= 12; $i++) {
 			$data['month_valid'][] = array(
-				'text'  => strftime('%B', mktime(0, 0, 0, $i, 1, 2000)),
+				'text'  => sprintf('%02d', $i).' - '.strftime('%B', mktime(0, 0, 0, $i, 1, 2000)),
 				'value' => sprintf('%02d', $i)
 			);
 		}
 
 		$today = getdate();
 
-		$data['year_valid'] = array();
-
-		for ($i = $today['year']; $i < $today['year'] + 20; $i++) {
+		$data['year_valid'] = [];
+		$data['year_valid'][] = [
+			'text' => $this->language->get('entry_cc_year'),
+			'value' =>''
+		];
+		for ($i = $today['year']; $i < $today['year'] + 17; $i++) {
 			$data['year_valid'][] = array(
 				'text'  => strftime('%Y', mktime(0, 0, 0, 1, 1, $i)),
 				'value' => strftime('%Y', mktime(0, 0, 0, 1, 1, $i))
@@ -110,6 +117,13 @@ class ControllerPaymentPayfull extends Controller {
 
 		$json = array();
 
+		$error = $this->validation();
+		if(count($error)){
+			$json['error'] = $error;
+			echo json_encode($json);
+			exit;
+		}
+
 		$response = $this->model_payment_payfull->send();	
 
 		$data = json_decode($response, true);
@@ -136,6 +150,47 @@ class ControllerPaymentPayfull extends Controller {
 		}
 		
 		echo json_encode($json);
+	}
+
+	//send details to bank api
+	public function validation(){
+		$this->language->load('payment/payfull');
+		$error = [];
+
+		if(!isset($this->request->post['cc_name']) OR $this->request->post['cc_name'] == ''){
+			$error['cc_name'] = $this->language->get('entry_cc_name').' '. $this->language->get('entry_field_required');
+		}
+
+		if(!isset($this->request->post['cc_number']) OR $this->request->post['cc_number'] == ''){
+			$error['cc_number'] = $this->language->get('entry_cc_number').' '. $this->language->get('entry_field_required');
+		}
+
+		if(!isset($this->request->post['cc_month']) OR $this->request->post['cc_month'] == ''){
+			$error['cc_month'] = $this->language->get('entry_cc_month').' '. $this->language->get('entry_field_required');
+		}
+
+		if(!isset($this->request->post['cc_year']) OR $this->request->post['cc_year'] == ''){
+			$error['cc_year'] = $this->language->get('entry_cc_year').' '. $this->language->get('entry_field_required');
+		}
+
+		if(!isset($this->request->post['cc_cvc']) OR $this->request->post['cc_cvc'] == ''){
+			$error['cc_cvc'] = $this->language->get('entry_cc_cvc').' '. $this->language->get('entry_field_required');
+		}
+
+		if(!isset($this->request->post['cc_cvc']) OR $this->request->post['cc_cvc'] == ''){
+			$error['cc_cvc'] = $this->language->get('entry_cc_cvc').' '. $this->language->get('entry_field_required');
+		}
+
+        //------------------------------------
+        if(isset($this->request->post['cc_number']) AND !is_numeric($this->request->post['cc_number']) ){
+            $error['cc_number'] = $this->language->get('entry_cc_number').' '. $this->language->get('entry_field_is_not_number');
+        }
+        if(isset($this->request->post['cc_cvc']) AND !is_numeric($this->request->post['cc_cvc']) ){
+            $error['cc_cvc'] = $this->language->get('entry_cc_cvc').' '. $this->language->get('entry_field_is_not_number');
+        }
+        
+
+		return $error;
 	}
 
 	//submit data to 3dsecure page 

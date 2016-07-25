@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']					= 'Payfull';
+$_['heading_title']					= 'Payfull Payment Gateway';
 
 // Text
 $_['text_payment']					= 'Payment';

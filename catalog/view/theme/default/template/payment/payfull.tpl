@@ -3,17 +3,19 @@
     <legend><?php echo $text_credit_card; ?></legend>
     <div class="form-group required">
       <label class="col-sm-2 control-label" for="input-cc-type"><?php echo $entry_cc_name; ?></label>
-      <div class="col-sm-10">
+      <div class="col-sm-6">
         <input type="text" name="cc_name" value="" placeholder="<?php echo $entry_cc_name; ?>" id="input-cc-name" class="form-control" />
       </div>
+      <div class="col-sm-4"></div>
     </div>
     <div class="form-group required">
       <label class="col-sm-2 control-label" for="input-cc-number"><?php echo $entry_cc_number; ?></label>
-      <div class="col-sm-10">
+      <div class="col-sm-6">
         <input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input-cc-number" class="form-control" />
       </div>
+      <div class="col-sm-4"></div>
     </div>
-    <div class="form-group">
+    <div class="form-group required">
       <label class="col-sm-2 control-label" for="input-cc-start-date"><?php echo $entry_cc_date; ?></label>
       <div class="col-sm-3">
         <select name="cc_month" id="input-cc-start-date" class="form-control">
@@ -22,7 +24,7 @@
           <?php } ?>
         </select>
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-3 required">
         <select name="cc_year" class="form-control">
           <?php foreach ($year_valid as $year) { ?>
           <option value="<?php echo $year['value']; ?>"><?php echo $year['text']; ?></option>
@@ -32,9 +34,10 @@
     </div>
     <div class="form-group required">
       <label class="col-sm-2 control-label" for="input-cc-cvv2"><?php echo $entry_cc_cvc; ?></label>
-      <div class="col-sm-10">
+      <div class="col-sm-6">
         <input type="text" name="cc_cvc" value="" placeholder="<?php echo $entry_cc_cvc; ?>" id="input-cc-cvc" class="form-control" />
       </div>
+      <div class="col-sm-4"></div>
     </div>
 
     <div class="form-group installments-wrapper">
@@ -132,8 +135,24 @@ $('#button-confirm').bind('click', function() {
         
       $('.alert').remove();
 
-      if (json['error']) {
-          $('#payment').before('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']+'</div>');
+      if (json['error']['cc_name']) {
+          $('#input-cc-name').after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['cc_name']+'</div>');
+      }
+
+      if (json['error']['cc_number']) {
+        $('#input-cc-number').after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['cc_number']+'</div>');
+      }
+
+      if (json['error']['cc_month']) {
+        $("select[name='cc_month']").after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['cc_month']+'</div>');
+      }
+
+      if (json['error']['cc_year']) {
+        $("select[name='cc_year']").after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['cc_year']+'</div>');
+      }
+
+      if (json['error']['cc_cvc']) {
+        $('#input-cc-cvc').after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['cc_cvc']+'</div>');
       }
 
       if (json['success']) {
