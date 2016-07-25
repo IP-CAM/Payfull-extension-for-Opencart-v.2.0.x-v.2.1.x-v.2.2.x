@@ -135,6 +135,10 @@ $('#button-confirm').bind('click', function() {
         
       $('.alert').remove();
 
+      if (json['error']['general_error']) {
+        $('#payment').after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['general_error']+'</div>');
+      }
+
       if (json['error']['cc_name']) {
           $('#input-cc-name').after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['cc_name']+'</div>');
       }

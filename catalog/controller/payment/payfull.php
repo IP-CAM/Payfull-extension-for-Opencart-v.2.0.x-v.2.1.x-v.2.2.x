@@ -139,7 +139,7 @@ class ControllerPaymentPayfull extends Controller {
 
 				$json['success'] = $this->url->link('checkout/success');
 			}else{
-				$json['error'] = $data['ErrorMSG'];
+				$json['error']['general_error'] = $data['ErrorMSG'];
 			}
 		}else{
 			
@@ -188,12 +188,73 @@ class ControllerPaymentPayfull extends Controller {
         if(isset($this->request->post['cc_cvc']) AND !is_numeric($this->request->post['cc_cvc']) ){
             $error['cc_cvc'] = $this->language->get('entry_cc_cvc').' '. $this->language->get('entry_field_is_not_number');
         }
-        
+
+        //------------------------------------
+        if(isset($this->request->post['cc_number']) AND !is_numeric($this->request->post['cc_number']) ){
+            $error['cc_number'] = $this->language->get('entry_cc_number').' '. $this->language->get('entry_field_is_not_number');
+        }
+        if(isset($this->request->post['cc_number']) AND $this->checkCCNumber($this->request->post['cc_number']) == ''){
+            $error['cc_number'] = $this->language->get('entry_cc_not_supported');
+        }
+        if(isset($this->request->post['cc_cvc']) AND !is_numeric($this->request->post['cc_cvc']) ){
+            $error['cc_cvc'] = $this->language->get('entry_cc_cvc').' '. $this->language->get('entry_field_is_not_number');
+        }
+        if(isset($this->request->post['cc_cvc']) AND  !$this->checkCCCVC($this->request->post['cc_number'], $this->request->post['cc_cvc']) ){
+            $error['cc_cvc'] = $this->language->get('entry_cc_cvc').' '. $this->language->get('entry_cc_cvc_wrong');
+        }
+        if(isset($this->request->post['cc_month']) AND isset($this->request->post['cc_year']) AND !$this->checkCCEXPDate($this->request->post['cc_month'], $this->request->post['cc_year']) ){
+            $error['cc_year'] = $this->language->get('entry_cc_date_wrong');
+            $error['cc_month'] = $this->language->get('entry_cc_date_wrong');
+        }
+
 
 		return $error;
 	}
 
-	//submit data to 3dsecure page 
+    public function checkCCNumber($cardNumber){
+        $cardNumber = preg_replace('/\D/', '', $cardNumber);
+        $len = strlen($cardNumber);
+        if ($len < 15 || $len > 16) {
+            return '';
+        }else {
+            switch($cardNumber) {
+                case(preg_match ('/^4/', $cardNumber) >= 1):
+                    return 'VISA';
+                    break;
+                case(preg_match ('/^5[1-5]/', $cardNumber) >= 1):
+                    return 'MASTERCARD';
+                    break;
+                default:
+                    return '';
+                    break;
+            }
+        }
+    }
+
+    public function checkCCCVC($cardNumber, $cvc){
+        // Get the first number of the credit card so we know how many digits to look for
+        $firstnumber = (int) substr($cardNumber, 0, 1);
+        if ($firstnumber === 3){
+            if (!preg_match("/^\d{4}$/", $cvc)){
+                // The credit card is an American Express card but does not have a four digit CVV code
+                return false;
+            }
+        }
+        else if (!preg_match("/^\d{3}$/", $cvc)){
+            // The credit card is a Visa, MasterCard, or Discover Card card but does not have a three digit CVV code
+            return false;
+        }
+        return true;
+    }
+
+    public function checkCCEXPDate($month, $year){
+        if(strtotime('01/'.$month.'/'.$year) <= time()){
+            return false;
+        }
+        return true;
+    }
+
+    //submit data to 3dsecure page
 	public function secure(){
 		$html = $this->db->query('select html from `'.DB_PREFIX.'payfull_3d_form` WHERE payfull_3d_form_id = "'.$this->session->data['payfull_3d_form_id'].'"')->row['html'];
 		
