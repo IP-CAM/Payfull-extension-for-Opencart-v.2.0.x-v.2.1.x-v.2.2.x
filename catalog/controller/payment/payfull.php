@@ -179,20 +179,22 @@ class ControllerPaymentPayfull extends Controller {
 
 		$response = $this->model_payment_payfull->send();	
 
-		$data = json_decode($response, true);
+		$responseData = json_decode($response, true);
 
-		if (isset($data['ErrorCode'])) { 
+		if (isset($responseData['ErrorCode'])) {
 
 			//for successfull payment without error 
-			if($data['ErrorCode'] == '00'){
+			if($responseData['ErrorCode'] == '00'){
 
-				$this->model_payment_payfull->saveResponse($data);
+				$this->model_payment_payfull->saveResponse($responseData);
 
-				$this->model_checkout_order->addOrderHistory($data['passive_data'], $this->config->get('payfull_order_status_id'));
+                $this->addSubTotalForInstCommission($responseData);
+
+				$this->model_checkout_order->addOrderHistory($responseData['passive_data'], $this->config->get('payfull_order_status_id'));
 
 				$json['success'] = $this->url->link('checkout/success');
 			}else{
-				$json['error']['general_error'] = $data['ErrorMSG'];
+				$json['error']['general_error'] = $responseData['ErrorMSG'];
 			}
 		}else{
 			
@@ -205,6 +207,39 @@ class ControllerPaymentPayfull extends Controller {
 		echo json_encode($json);
 	}
 
+    public function addSubTotalForInstCommission($responseData){
+        $this->load->model('checkout/order');
+        $this->language->load('payment/payfull');
+        $order_info                         = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $payfull_commission_sub_total_title = $this->language->get('commission_sub_total_title');
+        $sort_order                         = 0;
+        $installments_number                = 1;
+        $installments_commission            = 0;
+
+        $installments_info 	= $this->model_payment_payfull->getInstallments();
+        $installments_info  = json_decode($installments_info, true);
+        foreach($installments_info['data'] as $temp) {
+            if($temp['bank'] == $responseData['bank_id']) {
+                foreach($temp["installments"] as $installmentInLoop){
+                    if($installmentInLoop["count"] == $responseData['installments']){
+                        $installments_number     = $installmentInLoop["count"];
+                        $installments_commission = $installmentInLoop["commission"];
+                        $installments_commission = str_replace('%', '', $installments_commission);
+                        break;
+                    }
+                }
+            }
+        }
+
+        $subTotalValue = $order_info['total'] * ($installments_commission/100);
+        $subTotalText  = $payfull_commission_sub_total_title.' - ('.$installments_number.'Inst '.$installments_commission.'%)'.$this->currency->format($subTotalValue, $order_info['currency_code'], true, true);;
+        $newOrderTotal = $subTotalValue + $order_info['total'];
+
+        if($installments_number > 1){
+            $this->db->query("INSERT INTO " . DB_PREFIX . "order_total SET order_id = '" . (int)$order_info['order_id'] . "', code = '" . $this->db->escape('sub_total') . "', title = '" . $this->db->escape($subTotalText) . "', `value` = '" . (float)$subTotalValue . "', sort_order = '" . (int)$sort_order . "'");
+            $this->db->query("UPDATE " . DB_PREFIX . "order_total SET `value` = '" . (float)$newOrderTotal . "' WHERE order_id = '" . (int)$order_info['order_id']. "' AND code = 'total'");
+        }
+    }
 	//send details to bank api
 	public function validation(){
 		$this->language->load('payment/payfull');

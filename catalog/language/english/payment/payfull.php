@@ -29,3 +29,5 @@ $_['entry_cc_date_wrong']       = 'Card Expiration Date is Wrong';
 $_['entry_payfull_installmet']  = 'Installmet';
 $_['entry_payfull_amount']      = 'Amount / Month';
 $_['entry_payfull_total']       = 'Total';
+
+$_['commission_sub_total_title'] = 'Inst Commission';
