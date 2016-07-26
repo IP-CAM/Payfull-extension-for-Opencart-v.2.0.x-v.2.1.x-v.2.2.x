@@ -4,7 +4,11 @@ class ControllerPaymentPayfull extends Controller {
 	public function index() {
 
 		$this->language->load('payment/payfull');
-		
+
+		$data['entry_payfull_installmet'] 	= $this->language->get('entry_payfull_installmet');
+		$data['entry_payfull_amount'] 		= $this->language->get('entry_payfull_amount');
+		$data['entry_payfull_total'] 		= $this->language->get('entry_payfull_total');
+
 		$data['button_confirm'] = $this->language->get('button_confirm');
 
 		$data['month_valid'] = [];
@@ -56,6 +60,10 @@ class ControllerPaymentPayfull extends Controller {
 		$data['master_img_path'] = $base_url.'image/payfull/payfull_creditcard_master.png';
 		$data['not_supported_img_path'] = $base_url.'image/payfull/payfull_creditcard_not_supported.png';
 
+		$this->load->model('checkout/order');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$total 		= $this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
+		$data['total']         = $total;
 
 		//for opencart less than 2.x
 		/*if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/payfull.tpl')) {
@@ -68,58 +76,92 @@ class ControllerPaymentPayfull extends Controller {
 	}
 
 	public function get_card_info(){
-
-		if(empty($this->request->post['cc_number'])){
-			exit();
-		}
-
+		$this->load->model('checkout/order');
 		$this->load->model('payment/payfull');
-		
-		$json = array();
-		$json['has3d'] = 0;
-		$json['installments'] = array(array('count' => 1));
-		
-		//{"brand":"VISA","type":"CREDIT","level":"CLASSIC","network":"AXESS","issuer":"AKBANK T.A.S.","virtual":false,"country":"TUR","bank_id":"Akbank"}}
-		$card_info = json_decode($this->model_payment_payfull->get_card_info(), true);
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-		$result = json_decode($this->model_payment_payfull->getInstallments(), true);
+		//default data
+		$defaultTotal 			=	$this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
+		$json 					= array();
+		$json['has3d'] 			= 0;
+		$json['installments'] 	= [['count' => 1, 'installment_total'=>$defaultTotal, 'total'=>$defaultTotal]];
 
-		$bank_info = array();
-
-		if(isset($card_info['data']['bank_id'])) {
-			foreach($result['data'] as $temp) {
-				if($temp['bank'] == $card_info['data']['bank_id']) {
-					$bank_info = $temp;
-				}
-			}	
+		//no cc number
+		if(empty($this->request->post['cc_number'])){
+			header('Content-type: text/json');
+			echo json_encode($json);
+			exit;
 		}
 
-		if($bank_info) {
-			$this->session->data['bank_id'] = $bank_info['bank'];
-			$this->session->data['gateway'] = $bank_info['gateway'];
+		//get info from API about bank + card + instalments
+		$card_info  		= json_decode($this->model_payment_payfull->get_card_info(), true);
+		$installments_info 	= json_decode($this->model_payment_payfull->getInstallments(), true);
+		$bank_info 			= array();
 
-			$json['bank_id'] = $bank_info['bank'];
-			
-			//get installment info 
-			$payfull_3dsecure_status = $this->config->get('payfull_3dsecure_status');
-			$payfull_installment_status = $this->config->get('payfull_installment_status');
+		//no bank is detected
+		if(!isset($card_info['data']['bank_id']) Or $card_info['data']['bank_id'] == '') {
+			header('Content-type: text/json');
+			echo json_encode($json);
+			exit;
+		}
 
-			//$json['installments'] = $bank_info['installments'];
-			$json['installments'] = array_merge(array(array('count' => 1)), $bank_info['installments']);
-
-			$json['has3d'] =  $bank_info['has3d'];
-
-			if(!$payfull_3dsecure_status){
-				$json['has3d'] = 0;
-			}
-
-			if(!$payfull_installment_status){
-				$json['installments'] = array(array('count' => 1));
+		foreach($installments_info['data'] as $temp) {
+			if($temp['bank'] == $card_info['data']['bank_id']) {
+				$bank_info = $temp;
+				break;
 			}
 		}
-		
+
+		//card bank is not in the list of installments
+		if(!count($bank_info)) {
+			header('Content-type: text/json');
+			echo json_encode($json);
+			exit;
+		}
+
+
+		$payfull_3dsecure_status 	= $this->config->get('payfull_3dsecure_status');
+		$payfull_installment_status = $this->config->get('payfull_installment_status');
+		$oneShotTotal 				= $this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
+		$json['has3d'] 				= ($payfull_3dsecure_status)?1:0;
+
+		//installments is not allowed for some reason
+		if(!$payfull_installment_status){
+			$json['installments'] = [['count' => 1, 'installment_total'=>$oneShotTotal, 'total'=>$oneShotTotal]];
+			header('Content-type: text/json');
+			echo json_encode($json);
+			exit;
+		}
+
+
+		$this->session->data['bank_id'] = $bank_info['bank'];
+		$this->session->data['gateway'] = $bank_info['gateway'];
+		$json['bank_id'] 				= $bank_info['bank'];
+
+		foreach($bank_info['installments'] as $justNormalKey=>$installment){
+			$commission = $installment['commission'];
+			$commission = str_replace('%', '', $commission);
+			$total      = $order_info['total'] + ($order_info['total'] * $commission/100);
+			$total      = $this->currency->format($total, $order_info['currency_code'], true, true);
+			$bank_info['installments'][$justNormalKey]['total'] = $total;
+
+			$installment_total = ($order_info['total'] + ($order_info['total'] * $commission/100))/$installment['count'];
+			$installment_total = $this->currency->format($installment_total, $order_info['currency_code'], true, true);
+			$bank_info['installments'][$justNormalKey]['installment_total'] = $installment_total;
+		}
+
+
+		$json['installments'] = array_merge(
+			[
+				['count' => 1, 'installment_total'=>$oneShotTotal, 'total'=>$oneShotTotal]
+			],
+			$bank_info['installments']
+		);
+
+
 		header('Content-type: text/json');
 		echo json_encode($json);
+		exit;
 	}
 
 	//send details to bank api 

@@ -42,10 +42,24 @@
 
     <div class="form-group installments-wrapper">
       <label class="col-sm-2 control-label" for="input-cc-start-date"><?php echo $text_installments; ?></label>
-      <div class="col-sm-3">
-        <select name="installments" class="form-control">
-        <option>1</option>
-        </select>
+      <div class="col-sm-6">
+          <div id="installment_table_id">
+              <div class="installmet_head">
+                  <div class="install_head_label add_space"></div>
+                  <div class="install_head_label"><?php echo $entry_payfull_installmet; ?></div>
+                  <div class="install_head_label"><?php echo $entry_payfull_amount; ?></div>
+                  <div class="install_head_label"><?php echo $entry_payfull_total; ?></div>
+              </div>
+              <div class="installment_body" id="installment_body">
+                  <div class="installment_row">
+                      <div class="install_body_label installment_radio"><input rel="1" type="radio" class="installment_radio" checked name="installments" value="1" /></div>
+                      <div class="install_body_label installment_lable_code">1</div>
+                      <div class="install_body_label"><?php echo $total; ?></div>
+                      <div class="install_body_label final_commi_price" rel="<?php echo $total; ?>"><?php echo $total; ?></div>
+                  </div>
+              </div>
+              <div class="installment_footer"></div>
+          </div>
       </div> 
     </div>
 
@@ -89,71 +103,84 @@
 
   });
 
-  cardNumberFiledSelector.on('change', function(){
-  $.ajax({
-    url: 'index.php?route=payment/payfull/get_card_info',
-    type: 'post',
-    data: $('#payment :input'),
-    dataType: 'json',
-    beforeSend: function() {
-      $('.alert').remove();
-      $('#button-confirm').attr('disabled', true);
-      $('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $text_wait; ?></div>');
-    },
-    complete: function() {
-      $('#button-confirm').attr('disabled', false);
-      $('.attention').remove();
-    },
-    success: function(json) {
+    cardNumberFiledSelector.on('change', function(){
+        $.ajax({
+            url: 'index.php?route=payment/payfull/get_card_info',
+            type: 'post',
+            data: $('#payment :input'),
+            dataType: 'json',
 
-      $('.alert').remove();
+            beforeSend: function() {
+                $('.alert').remove();
+                $('#button-confirm').attr('disabled', true);
+                $('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $text_wait; ?></div>');
+            },
 
-      if(json['has3d'] == 1){
-          $('.use-3d-wrapper').css('display','block');
-      }else{
-          $('.use-3d-wrapper').css('display','none');
-      }
+            complete: function() {
+                $('#button-confirm').attr('disabled', false);
+                $('.attention').remove();
+            },
+            success: function(json) {
+                $('.alert').remove();
+                if(json['has3d'] == 1){
+                    $('.use-3d-wrapper').css('display','block');
+                }else{
+                    $('.use-3d-wrapper').css('display','none');
+                }
 
-      if(json['installments'].length > 0){
+                if(json['installments'].length > 0){
+                    var $options          = $('#installment_body');
+                    $options.show();
+                    $options.html('');
+                    var oneShotCount      = 1;
+                    var oneShotInsTotal   = json['installments']['0']['installment_total'];
+                    var oneShotTotal      = json['installments']['0']['total'];
+                    var oneShotSelected   = 1;
+                    $options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
 
-          $html = '';
+                    $html = '';
+                    for($i=1; $i < json['installments'].length; $i++){
+                        var installment_total       = json['installments'][$i]['installment_total'];
+                        var count                   = json['installments'][$i]['count'];
+                        var total                   = json['installments'][$i]['total'];
+                        $options.append(getInstallementOption(count, installment_total, total, 0));
+                    }
 
-          for($i=0; $i < json['installments'].length; $i++){
-            $html += '<option>'+json['installments'][$i]['count']+'</option>';
-          }
-
-          $('.installments-wrapper').css('display', 'block');
-          $('.installments-wrapper select').html($html);
-      }else{
-          $('.installments-wrapper').css('display', 'block');
-          $('.installments-wrapper select').html('<option>1</option>');
-      }
-
-      if (json['success']) {
-       // location = json['success'];
-      }
-    }
-  });
-});
+                    $('.installments-wrapper').css('display', 'block');
+                    $('.installments-wrapper select').html($html);
+                }else{
+                    $('.installments-wrapper').css('display', 'block');
+                    $('.installments-wrapper select').html('<option>1</option>');
+                }
+            }
+        });
+    });
 
 $('#button-confirm').bind('click', function() {
   $.ajax({
     url: 'index.php?route=payment/payfull/send',
     type: 'post',
-    data: $('#payment select, #payment input[type="text"], #payment input[type="hidden"], #payment input[type="checkbox"]:checked'),
+    data: $('#payment select, #payment input[type="text"], #payment input[type="hidden"], #payment input[type="checkbox"]:checked, #payment input[type="radio"]:checked' ),
     dataType: 'json',
+
     beforeSend: function() {
       $('.alert').remove();
       $('#button-confirm').attr('disabled', true);
       $('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $text_wait; ?></div>');
     },
+
     complete: function() {
       $('#button-confirm').attr('disabled', false);
       $('.attention').remove();
     },
+
     success: function(json) {
-        
-      $('.alert').remove();
+        if (json['success']) {
+            location = json['success'];
+            return true;
+        }
+
+        $('.alert').remove();
 
       if (json['error']['general_error']) {
         $('#payment').after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['general_error']+'</div>');
@@ -178,13 +205,26 @@ $('#button-confirm').bind('click', function() {
       if (json['error']['cc_cvc']) {
         $('#input-cc-cvc').after('<div class="alert alert-warning"><i class="fa fa-info-circle"></i> '+json['error']['cc_cvc']+'</div>');
       }
-
-      if (json['success']) {
-         location = json['success'];
-      }
     }
   });
 });
+
+function getInstallementOption(count, instalment_total, total, checked) {
+    if(checked) checked = 'checked="checked"';
+    else checked = '';
+
+    return ''
+            + '<div class="installment_row">'
+            + '<div class="install_body_label installment_radio">'
+            + '<input rel="'+count+'" class="custom_field_installment_radio" type="radio" '+checked+' name="installments" value="'+count+'" />'
+            + '</div>'
+            + '<div class="install_body_label installment_lable_code">'+count+'</div>'
+            + '<div class="install_body_label">'+ instalment_total + '</div>'
+            + '<div rel="' + total + '" class="install_body_label final_commi_price">' +total + '</div>'
+            + '</div>'
+            ;
+}
+
 //--></script>
 
 <style>
@@ -203,4 +243,16 @@ $('#button-confirm').bind('click', function() {
     float: left;
   }
 
+
+.card_loder > img {display: inline;vertical-align: middle;width: 25px;}
+.card_image > img {display: inline-block;width: auto;height:25px;vertical-align: middle;}
+.card_image { display: inline-block;  padding:0 5px;vertical-align: bottom;}
+.toatl_label h3 {margin: 15px 0 0 0;}
+.install_body_label {float: left;width: 32%;height: 40px;text-align: center; border-bottom: 1px solid #d2d2d2;line-height: 40px;}
+.installment_row {/* padding-top: 10px;*/}
+.install_body_label.installment_radio, .installmet_head .install_head_label.add_space {height: 40px;text-align: center;width: 4%;line-height: 40px;}
+#installment_table_id {background-color: #eee;border: 1px solid;border-radius: 5px;padding: 10px;margin-top: 20px;}
+.installmet_head .install_head_label {float: left;font-weight: bold;text-align: center;width: 32%; height: 40px;line-height: 40px;border-bottom: 2px solid #d2d2d2; }
+.installment_body , .installment_footer {  clear: both; }
+.toatl_label {display:  none;}
 </style>

@@ -66,32 +66,32 @@ class ModelPaymentPayfull extends Model {
 		}
 
 		$params = array(		    
-		    "type"            => 'Sale',//[mandatory]
-		    "total"           => $total,//[mandatory]
-		    "cc_name"         => isset($this->request->post['cc_name'])?$this->request->post['cc_name']:'',//[mandatory]
-		    "cc_number"       => isset($this->request->post['cc_number'])?$this->request->post['cc_number']:'',//'4355084355084358'[mandatory]
-		    "cc_month"        => isset($this->request->post['cc_month'])?$this->request->post['cc_month']:'',//[mandatory]
-		    "cc_year"         => isset($this->request->post['cc_year'])?$this->request->post['cc_year']:'',//[mandatory]
-		    "cc_cvc"          => isset($this->request->post['cc_cvc'])?$this->request->post['cc_cvc']:'',//[mandatory]
+		    "type"            => 'Sale',
+		    "total"           => $total,
+		    "cc_name"         => isset($this->request->post['cc_name'])?$this->request->post['cc_name']:'',
+		    "cc_number"       => isset($this->request->post['cc_number'])?$this->request->post['cc_number']:'',
+		    "cc_month"        => isset($this->request->post['cc_month'])?$this->request->post['cc_month']:'',
+		    "cc_year"         => isset($this->request->post['cc_year'])?$this->request->post['cc_year']:'',
+		    "cc_cvc"          => isset($this->request->post['cc_cvc'])?$this->request->post['cc_cvc']:'',
 
-		    "currency"        => $order_info['currency_code'],//'TRY',//[mandatory]
-		    "language"        => 'tr',//[mandatory]
-		    "client_ip"       => $_SERVER['REMOTE_ADDR'],//[mandatory] //your client IP
-		    "payment_title"   => 'Order #'.$order_info['order_id'],//[mandatory]
-		    "use3d"           => $user3d, ////[optional]  0 3D off / 1 3D on
-		    "return_url"      => $this->url->link('payment/payfull/callback'),//[optional] set return_url 3D secure mode
+		    "currency"        => $order_info['currency_code'],
+		    "language"        => 'tr',
+		    "client_ip"       => $_SERVER['REMOTE_ADDR'],
+		    "payment_title"   => 'Order #'.$order_info['order_id'],
+		    "use3d"           => $user3d,
+		    "return_url"      => $this->url->link('payment/payfull/callback'),
 
-		    "customer_firstname" => $order_info['firstname'],//[mandatory]
-		    "customer_lastname"  => $order_info['lastname'],//[mandatory]
-		    "customer_email"     => $order_info['email'],//[mandatory]
-		    "customer_phone"     => $order_info['telephone'],//[mandatory]
-		   // "customer_tc"        => '1122211122',//[optional]
+		    "customer_firstname" => $order_info['firstname'],
+		    "customer_lastname"  => $order_info['lastname'],
+		    "customer_email"     => $order_info['email'],
+		    "customer_phone"     => $order_info['telephone'],
 
-		    "passive_data"  => $order_info['order_id'],//'####aaaa',//[optional]
+
+		    "passive_data"  => $order_info['order_id'],
 		);
 
 		if(isset($this->request->post['installments'])) {
-			$params["installments"] = $this->request->post['installments'];//[mandatory]			
+			$params["installments"] = $this->request->post['installments'];
 		}else{
 			$params["installments"] = 1;			
 		}
