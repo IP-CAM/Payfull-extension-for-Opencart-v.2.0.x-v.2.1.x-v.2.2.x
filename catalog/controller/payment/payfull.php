@@ -56,9 +56,10 @@ class ControllerPaymentPayfull extends Controller {
             $base_url = $this->config->get('config_url');
         }
 
-		$data['visa_img_path']   = $base_url.'image/payfull/payfull_creditcard_visa.png';
-		$data['master_img_path'] = $base_url.'image/payfull/payfull_creditcard_master.png';
-		$data['not_supported_img_path'] = $base_url.'image/payfull/payfull_creditcard_not_supported.png';
+		$data['visa_img_path']           = $base_url.'image/payfull/payfull_creditcard_visa.png';
+		$data['master_img_path']         = $base_url.'image/payfull/payfull_creditcard_master.png';
+		$data['not_supported_img_path']  = $base_url.'image/payfull/payfull_creditcard_not_supported.png';
+        $data['payfull_3dsecure_status'] = $this->config->get('payfull_3dsecure_status');
 
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -164,13 +165,12 @@ class ControllerPaymentPayfull extends Controller {
 		exit;
 	}
 
-	//send details to bank api 
 	public function send(){
 		$this->load->model('payment/payfull');
 
 		$json = array();
 
-		$error = $this->validation();
+		$error = $this->validatePaymentData();
 		if(count($error)){
 			$json['error'] = $error;
 			echo json_encode($json);
@@ -182,7 +182,6 @@ class ControllerPaymentPayfull extends Controller {
 		$responseData = json_decode($response, true);
 
 		if (isset($responseData['ErrorCode'])) {
-
 			//for successfull payment without error 
 			if($responseData['ErrorCode'] == '00'){
 
@@ -197,10 +196,8 @@ class ControllerPaymentPayfull extends Controller {
 				$json['error']['general_error'] = $responseData['ErrorMSG'];
 			}
 		}else{
-			
 			$this->db->query('insert into `'.DB_PREFIX.'payfull_3d_form` SET html="'.htmlspecialchars($response).'"');
 			$this->session->data['payfull_3d_form_id'] = $this->db->getLastId();
-
 			$json['success'] = $this->url->link('payment/payfull/secure');
 		}
 		
@@ -240,8 +237,8 @@ class ControllerPaymentPayfull extends Controller {
             $this->db->query("UPDATE " . DB_PREFIX . "order_total SET `value` = '" . (float)$newOrderTotal . "' WHERE order_id = '" . (int)$order_info['order_id']. "' AND code = 'total'");
         }
     }
-	//send details to bank api
-	public function validation(){
+
+	public function validatePaymentData(){
 		$this->language->load('payment/payfull');
 		$error = [];
 
@@ -295,6 +292,9 @@ class ControllerPaymentPayfull extends Controller {
             $error['cc_month'] = $this->language->get('entry_cc_date_wrong');
         }
 
+        if(isset($this->request->post['use3d']) AND $this->request->post['use3d'] AND !$this->config->get('payfull_3dsecure_status')){
+            $error['general_error'] = $this->language->get('entry_3d_not_available');
+        }
 
 		return $error;
 	}
@@ -342,7 +342,6 @@ class ControllerPaymentPayfull extends Controller {
         return true;
     }
 
-    //submit data to 3dsecure page
 	public function secure(){
 		$html = $this->db->query('select html from `'.DB_PREFIX.'payfull_3d_form` WHERE payfull_3d_form_id = "'.$this->session->data['payfull_3d_form_id'].'"')->row['html'];
 		
@@ -352,30 +351,6 @@ class ControllerPaymentPayfull extends Controller {
 		echo htmlspecialchars_decode($html);
 	}
 
-	
-	/*
-	------------------------------------
-	callback from bank 
-	------------------------------------
-	Array
-	(
-	    [type] => Sale
-	    [status] => 1
-	    [ErrorMSG] => 
-	    [ErrorCode] => 00
-	    [transaction_id] => T4U_9b8b678785_42d6d9213
-	    [passive_data] => 24
-	    [original_currency] => USD
-	    [total] => 312.59
-	    [currency] => TRY
-	    [conversion_rate] => 0.3391
-	    [bank_id] => Akbank
-	    [use3d] => 1
-	    [installments] => 2
-	    [time] => 02-06-2016 05:22:08
-	    [confirm_action] => 0
-	)
-	*/
 	public function callback() {
 
 		$this->load->model('payment/payfull');

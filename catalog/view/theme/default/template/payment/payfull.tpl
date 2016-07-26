@@ -65,10 +65,10 @@
 
     <input name="use3d" type="hidden" value="0" />
 
-    <div class="form-group use-3d-wrapper" style="display: none;">
+    <div class="form-group use-3d-wrapper" style="<?php echo ($payfull_3dsecure_status==0)?'display: none':''; ?>">
       <div class="col-sm-10 col-sm-offset-2">
       <div class="checkbox">
-        <label><input name="use3d" type="checkbox" value="1"><?php echo $text_3d; ?></label>
+        <label><input name="use3d" id="use3d" type="checkbox" value="1"><?php echo $text_3d; ?></label>
       </div>
       </div>
     </div>
