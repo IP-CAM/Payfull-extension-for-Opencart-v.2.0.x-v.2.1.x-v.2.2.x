@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
-    <name>payfull</name>
+    <name>Payfull</name>
     <version>1.0</version>
-    <author>Kathrecha Krushn</author>
-    <code>payfull</code>
-    <link>http://www.iamkrushn.com</link>
+    <author>Payfull</author>
+    <code>Payfull</code>
+    <link>http://www.payfull.com</link>
     <file path="admin/language/en-gb/common/menu.php">
         <operation>
             <search><![CDATA[$_['text_order']]]></search>
