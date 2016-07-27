@@ -82,81 +82,19 @@
 </div>
 <script type="text/javascript"><!--
 
-  var cardNumberFiledSelector = $('#input-cc-number');
-  cardNumberFiledSelector.on('change keyup keydown', function(){
-    var number = $(this).val();
-    cardNumberFiledSelector.removeClass('input-cc-number-not-supported');
+    var cardNumberFiledSelector = $('#input-cc-number');
+    var confirmButton           = $('#button-confirm');
 
-    var re_visa = new RegExp("^4");
-    var re_master = new RegExp("^5[1-5]");
-    if (number.match(re_visa) != null){
-      cardNumberFiledSelector.addClass('input-cc-number-visa');
-      cardNumberFiledSelector.removeClass('input-cc-number-master');
-    }else if (number.match(re_master) != null){
-      cardNumberFiledSelector.removeClass('input-cc-number-visa');
-      cardNumberFiledSelector.addClass('input-cc-number-master');
-    }else{
-      cardNumberFiledSelector.removeClass('input-cc-number-visa');
-      cardNumberFiledSelector.removeClass('input-cc-number-master');
-      cardNumberFiledSelector.addClass('input-cc-number-not-supported');
-    }
+    cardNumberFiledSelector.keyup(function(){
+        var number = $(this).val();
+        cardBrandDetector(number);
+        if(number.length == 16){
+            refreshInstallmentOptions();
+        }
 
   });
 
-    cardNumberFiledSelector.on('change', function(){
-        $.ajax({
-            url: 'index.php?route=payment/payfull/get_card_info',
-            type: 'post',
-            data: $('#payment :input'),
-            dataType: 'json',
-
-            beforeSend: function() {
-                $('.alert').remove();
-                $('#button-confirm').attr('disabled', true);
-                $('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $text_wait; ?></div>');
-            },
-
-            complete: function() {
-                $('#button-confirm').attr('disabled', false);
-                $('.attention').remove();
-            },
-            success: function(json) {
-                $('.alert').remove();
-                if(json['has3d'] == 1){
-                    $('.use-3d-wrapper').css('display','block');
-                }else{
-                    $('.use-3d-wrapper').css('display','none');
-                }
-
-                if(json['installments'].length > 0){
-                    var $options          = $('#installment_body');
-                    $options.show();
-                    $options.html('');
-                    var oneShotCount      = 1;
-                    var oneShotInsTotal   = json['installments']['0']['installment_total'];
-                    var oneShotTotal      = json['installments']['0']['total'];
-                    var oneShotSelected   = 1;
-                    $options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
-
-                    $html = '';
-                    for($i=1; $i < json['installments'].length; $i++){
-                        var installment_total       = json['installments'][$i]['installment_total'];
-                        var count                   = json['installments'][$i]['count'];
-                        var total                   = json['installments'][$i]['total'];
-                        $options.append(getInstallementOption(count, installment_total, total, 0));
-                    }
-
-                    $('.installments-wrapper').css('display', 'block');
-                    $('.installments-wrapper select').html($html);
-                }else{
-                    $('.installments-wrapper').css('display', 'block');
-                    $('.installments-wrapper select').html('<option>1</option>');
-                }
-            }
-        });
-    });
-
-$('#button-confirm').bind('click', function() {
+    confirmButton.bind('click', function() {
   $.ajax({
     url: 'index.php?route=payment/payfull/send',
     type: 'post',
@@ -209,21 +147,92 @@ $('#button-confirm').bind('click', function() {
   });
 });
 
-function getInstallementOption(count, instalment_total, total, checked) {
-    if(checked) checked = 'checked="checked"';
-    else checked = '';
+    function cardBrandDetector(number) {
+        cardNumberFiledSelector.removeClass('input-cc-number-not-supported');
+        var re_visa = new RegExp("^4");
+        var re_master = new RegExp("^5[1-5]");
+        if (number.match(re_visa) != null){
+            cardNumberFiledSelector.addClass('input-cc-number-visa');
+            cardNumberFiledSelector.removeClass('input-cc-number-master');
+        }else if (number.match(re_master) != null){
+            cardNumberFiledSelector.removeClass('input-cc-number-visa');
+            cardNumberFiledSelector.addClass('input-cc-number-master');
+        }else{
+            cardNumberFiledSelector.removeClass('input-cc-number-visa');
+            cardNumberFiledSelector.removeClass('input-cc-number-master');
+            cardNumberFiledSelector.addClass('input-cc-number-not-supported');
+        }
+    }
 
-    return ''
-            + '<div class="installment_row">'
-            + '<div class="install_body_label installment_radio">'
-            + '<input rel="'+count+'" class="custom_field_installment_radio" type="radio" '+checked+' name="installments" value="'+count+'" />'
-            + '</div>'
-            + '<div class="install_body_label installment_lable_code">'+count+'</div>'
-            + '<div class="install_body_label">'+ instalment_total + '</div>'
-            + '<div rel="' + total + '" class="install_body_label final_commi_price">' +total + '</div>'
-            + '</div>'
-            ;
-}
+    function refreshInstallmentOptions(){
+        $.ajax({
+            url: 'index.php?route=payment/payfull/get_card_info',
+            type: 'post',
+            data: $('#payment :input'),
+            dataType: 'json',
+
+            beforeSend: function() {
+                $('.alert').remove();
+                $('#button-confirm').attr('disabled', true);
+                $('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $text_wait; ?></div>');
+            },
+
+            complete: function() {
+                $('#button-confirm').attr('disabled', false);
+                $('.attention').remove();
+            },
+
+            success: function(json) {
+                $('.alert').remove();
+                if(json['has3d'] == 1){
+                    $('.use-3d-wrapper').css('display','block');
+                }else{
+                    $('.use-3d-wrapper').css('display','none');
+                }
+
+                if(json['installments'].length > 0){
+                    var $options          = $('#installment_body');
+                    $options.show();
+                    $options.html('');
+                    var oneShotCount      = 1;
+                    var oneShotInsTotal   = json['installments']['0']['installment_total'];
+                    var oneShotTotal      = json['installments']['0']['total'];
+                    var oneShotSelected   = 1;
+                    $options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
+
+                    $html = '';
+                    for($i=1; $i < json['installments'].length; $i++){
+                        var installment_total       = json['installments'][$i]['installment_total'];
+                        var count                   = json['installments'][$i]['count'];
+                        var total                   = json['installments'][$i]['total'];
+                        $options.append(getInstallementOption(count, installment_total, total, 0));
+                    }
+
+                    $('.installments-wrapper').css('display', 'block');
+                    $('.installments-wrapper select').html($html);
+                }else{
+                    $('.installments-wrapper').css('display', 'block');
+                    $('.installments-wrapper select').html('<option>1</option>');
+                }
+            }
+        });
+    };
+
+    function getInstallementOption(count, instalment_total, total, checked) {
+        if(checked) checked = 'checked="checked"';
+        else checked = '';
+
+        return ''
+                + '<div class="installment_row">'
+                + '<div class="install_body_label installment_radio">'
+                + '<input rel="'+count+'" class="custom_field_installment_radio" type="radio" '+checked+' name="installments" value="'+count+'" />'
+                + '</div>'
+                + '<div class="install_body_label installment_lable_code">'+count+'</div>'
+                + '<div class="install_body_label">'+ instalment_total + '</div>'
+                + '<div rel="' + total + '" class="install_body_label final_commi_price">' +total + '</div>'
+                + '</div>'
+                ;
+    }
 
 //--></script>
 
