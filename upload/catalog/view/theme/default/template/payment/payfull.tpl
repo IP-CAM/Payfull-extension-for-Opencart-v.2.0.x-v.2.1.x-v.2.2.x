@@ -11,7 +11,7 @@
     <div class="form-group required">
       <label class="col-sm-2 control-label" for="input-cc-number"><?php echo $entry_cc_number; ?></label>
       <div class="col-sm-6">
-        <input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input-cc-number" class="input-cc-number-not-supported form-control" />
+        <input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input-cc-number" class="input-cc-number-not-supported form-control" maxlength="16" />
       </div>
       <div class="col-sm-4"></div>
     </div>
