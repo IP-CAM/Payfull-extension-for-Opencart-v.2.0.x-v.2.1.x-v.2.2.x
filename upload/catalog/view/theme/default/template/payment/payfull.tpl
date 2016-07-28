@@ -45,7 +45,7 @@
       <div class="col-sm-6">
           <div id="installment_table_id">
               <div class="installmet_head">
-                  <div class="install_head_label add_space"></div>
+                  <div class="install_head_label add_space"><img style="display: none" class="bank_photo" data-src="<?php echo $payfull_banks_images; ?>" src=""></div>
                   <div class="install_head_label"><?php echo $entry_payfull_installmet; ?></div>
                   <div class="install_head_label"><?php echo $entry_payfull_amount; ?></div>
                   <div class="install_head_label"><?php echo $entry_payfull_total; ?></div>
@@ -190,6 +190,12 @@
                     $('.use-3d-wrapper').css('display','none');
                 }
 
+                if(json['bank_id'].length > 0){
+                    var $bank_photo = $('.bank_photo');
+                    $bank_photo.attr('src', $bank_photo.attr('data-src')+json['bank_id']+'.png');
+                    $bank_photo.show();
+                }
+
                 if(json['installments'].length > 0){
                     var $options          = $('#installment_body');
                     $options.show();
@@ -257,11 +263,11 @@
 .card_image > img {display: inline-block;width: auto;height:25px;vertical-align: middle;}
 .card_image { display: inline-block;  padding:0 5px;vertical-align: bottom;}
 .toatl_label h3 {margin: 15px 0 0 0;}
-.install_body_label {float: left;width: 32%;height: 40px;text-align: center; border-bottom: 1px solid #d2d2d2;line-height: 40px;}
+.install_body_label {float: left;width: 30%;height: 40px;text-align: center; border-bottom: 1px solid #d2d2d2;line-height: 40px;}
 .installment_row {/* padding-top: 10px;*/}
-.install_body_label.installment_radio, .installmet_head .install_head_label.add_space {height: 40px;text-align: center;width: 4%;line-height: 40px;}
+.install_body_label.installment_radio, .installmet_head .install_head_label.add_space {height: 40px;text-align: center;width: 10%;line-height: 40px;}
 #installment_table_id {background-color: #eee;border: 1px solid;border-radius: 5px;padding: 10px;margin-top: 20px;}
-.installmet_head .install_head_label {float: left;font-weight: bold;text-align: center;width: 32%; height: 40px;line-height: 40px;border-bottom: 2px solid #d2d2d2; }
+.installmet_head .install_head_label {float: left;font-weight: bold;text-align: center;width: 30%; height: 40px;line-height: 40px;border-bottom: 2px solid #d2d2d2; }
 .installment_body , .installment_footer {  clear: both; }
 .toatl_label {display:  none;}
 </style>
