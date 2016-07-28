@@ -190,10 +190,12 @@
                     $('.use-3d-wrapper').css('display','none');
                 }
 
+                var $bank_photo = $('.bank_photo');
                 if(json['bank_id'].length > 0){
-                    var $bank_photo = $('.bank_photo');
                     $bank_photo.attr('src', $bank_photo.attr('data-src')+json['bank_id']+'.png');
                     $bank_photo.show();
+                }else{
+                    $bank_photo.hide();
                 }
 
                 if(json['installments'].length > 0){
