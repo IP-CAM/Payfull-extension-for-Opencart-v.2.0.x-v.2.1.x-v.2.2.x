@@ -5,14 +5,22 @@
     <author>Payfull</author>
     <code>Payfull</code>
     <link>http://www.payfull.com</link>
-    <file path="admin/language/en-gb/common/menu.php">
+    <file path="admin/language/english/common/menu.php">
         <operation>
             <search><![CDATA[$_['text_order']]]></search>
             <add position="before"><![CDATA[
                 $_['text_payfull_history'] =    'Payfull history';
             ]]></add>
         </operation>
-    </file>  
+    </file>
+    <file path="admin/language/english/common/menu.php">
+        <operation>
+            <search><![CDATA[$_['text_order']]]></search>
+            <add position="before"><![CDATA[
+                $_['text_payfull_history'] =    'Payfull history';
+            ]]></add>
+        </operation>
+    </file>
     <file path="admin/controller/common/menu.php">
         <operation>
             <search><![CDATA[$data['text_order']]]></search>
