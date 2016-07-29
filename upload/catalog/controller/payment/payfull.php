@@ -3,7 +3,7 @@ class ControllerPaymentPayfull extends Controller {
 
 	public function index() {
 
-		$this->language->load('payment/payfull');
+		$this->language->load('payment/payfull'); 
 
 		$data['entry_payfull_installmet'] 	= $this->language->get('entry_payfull_installmet');
 		$data['entry_payfull_amount'] 		= $this->language->get('entry_payfull_amount');
