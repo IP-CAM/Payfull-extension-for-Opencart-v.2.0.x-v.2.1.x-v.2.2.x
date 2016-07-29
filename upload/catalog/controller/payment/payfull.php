@@ -19,7 +19,7 @@ class ControllerPaymentPayfull extends Controller {
 
 		for ($i = 1; $i <= 12; $i++) {
 			$data['month_valid'][] = array(
-				'text'  => sprintf('%02d', $i).' - '.strftime('%B', mktime(0, 0, 0, $i, 1, 2000)),
+				'text'  => sprintf('%02d', $i),
 				'value' => sprintf('%02d', $i)
 			);
 		}
