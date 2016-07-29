@@ -60,7 +60,7 @@ class ControllerPaymentPayfull extends Controller {
 		$data['master_img_path']         = $base_url.'image/payfull/payfull_creditcard_master.png';
 		$data['not_supported_img_path']  = $base_url.'image/payfull/payfull_creditcard_not_supported.png';
         $data['payfull_3dsecure_status'] = $this->config->get('payfull_3dsecure_status');
-        $data['payfull_banks_images']    = $base_url.'image/payfull/banks/';
+        $data['payfull_banks_images']    = $base_url.'image/payfull/';
 
 		$this->load->model('checkout/order');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
@@ -88,6 +88,7 @@ class ControllerPaymentPayfull extends Controller {
 		$json['has3d'] 			= 0;
 		$json['installments'] 	= [['count' => 1, 'installment_total'=>$defaultTotal, 'total'=>$defaultTotal]];
 		$json['bank_id'] 	    = '';
+		$json['card_type'] 	    = '';
 
 		//no cc number
 		if(empty($this->request->post['cc_number'])){
@@ -107,7 +108,8 @@ class ControllerPaymentPayfull extends Controller {
 			echo json_encode($json);
 			exit;
 		}else{
-			$json['bank_id'] = $card_info['data']['bank_id'];
+			$json['bank_id']   = $card_info['data']['bank_id'];
+			$json['card_type'] = $card_info['data']['type'];
 		}
 
 		foreach($installments_info['data'] as $temp) {

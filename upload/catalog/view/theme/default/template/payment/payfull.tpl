@@ -192,13 +192,18 @@
 
                 var $bank_photo = $('.bank_photo');
                 if(json['bank_id'].length > 0){
-                    $bank_photo.attr('src', $bank_photo.attr('data-src')+json['bank_id']+'.png');
+                    if(json['card_type'] == 'CREDIT'){
+                        $bank_photo.attr('src', $bank_photo.attr('data-src')+'networks/'+json['bank_id']+'.png');
+                    }else{
+                        $bank_photo.attr('src', $bank_photo.attr('data-src')+'banks/'+json['bank_id']+'.png');
+                    }
+
                     $bank_photo.show();
                 }else{
                     $bank_photo.hide();
                 }
 
-                if(json['installments'].length > 0){
+                if(json['installments'].length > 0 && json['card_type'] == 'CREDIT'){
                     var $options          = $('#installment_body');
                     $options.show();
                     $options.html('');
@@ -208,7 +213,6 @@
                     var oneShotSelected   = 1;
                     $options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
 
-                    $html = '';
                     for($i=1; $i < json['installments'].length; $i++){
                         var installment_total       = json['installments'][$i]['installment_total'];
                         var count                   = json['installments'][$i]['count'];
@@ -216,11 +220,6 @@
                         $options.append(getInstallementOption(count, installment_total, total, 0));
                     }
 
-                    $('.installments-wrapper').css('display', 'block');
-                    $('.installments-wrapper select').html($html);
-                }else{
-                    $('.installments-wrapper').css('display', 'block');
-                    $('.installments-wrapper select').html('<option>1</option>');
                 }
             }
         });
