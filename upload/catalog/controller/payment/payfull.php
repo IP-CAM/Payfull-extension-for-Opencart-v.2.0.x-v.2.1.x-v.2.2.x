@@ -371,8 +371,10 @@ class ControllerPaymentPayfull extends Controller {
 
 		$order_info = $this->model_checkout_order->getOrder($order_id);
 
-		if ($order_info && $this->request->post['ErrorCode'] == '00') {			
+		if ($order_info && $this->request->post['ErrorCode'] == '00') {
+			$responseData =  $this->request->post;
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payfull_order_status_id'));
+			$this->addSubTotalForInstCommission($responseData);
 			$this->response->redirect($this->url->link('checkout/success'));
 		}else{
 			$this->response->redirect($this->url->link('checkout/failure'));
