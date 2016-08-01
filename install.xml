@@ -29,7 +29,7 @@
                 $data['payfull_history'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'], 'SSL');
             ]]></add>
         </operation>
-    </file> 
+    </file>
     <file path="admin/view/template/common/menu.tpl">
         <operation>
             <search><![CDATA[<?php echo $text_order; ?></a></li>]]></search>
@@ -37,5 +37,5 @@
                 <li><a href="<?php echo $payfull_history; ?>"><?php echo $text_payfull_history; ?></a></li>
             ]]></add>
         </operation>
-    </file> 
+    </file>
 </modification>
