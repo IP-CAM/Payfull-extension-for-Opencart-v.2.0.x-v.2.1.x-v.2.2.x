@@ -238,6 +238,7 @@ class ControllerPaymentPayfull extends Controller {
         if($installments_number > 1){
             $this->db->query("INSERT INTO " . DB_PREFIX . "order_total SET order_id = '" . (int)$order_info['order_id'] . "', code = '" . $this->db->escape('sub_total') . "', title = '" . $this->db->escape($subTotalText) . "', `value` = '" . (float)$subTotalValue . "', sort_order = '" . (int)$sort_order . "'");
             $this->db->query("UPDATE " . DB_PREFIX . "order_total SET `value` = '" . (float)$newOrderTotal . "' WHERE order_id = '" . (int)$order_info['order_id']. "' AND code = 'total'");
+            $this->db->query("UPDATE " . DB_PREFIX . "order SET `total` = '" . (float)$newOrderTotal . "' WHERE order_id = '" . (int)$order_info['order_id']. "'");
         }
     }
 
