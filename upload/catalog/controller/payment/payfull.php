@@ -67,14 +67,11 @@ class ControllerPaymentPayfull extends Controller {
 		$total 		= $this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
 		$data['total']         = $total;
 
-		//for opencart less than 2.x
-		/*if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/payfull.tpl')) {
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/payfull.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/payment/payfull.tpl', $data);
 		} else {
-			return $this->load->view('default/template/payment/payfull.tpl', $data);
-		}*/
-
-		return $this->load->view('payment/payfull.tpl', $data);
+			return $this->load->view('payment/payfull.tpl', $data);
+		}
 	}
 
 	public function get_card_info(){

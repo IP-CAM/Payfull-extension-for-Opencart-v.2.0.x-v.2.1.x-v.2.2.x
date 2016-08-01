@@ -12,7 +12,15 @@
                 $_['text_payfull_history'] =    'Payfull history';
             ]]></add>
         </operation>
-    </file>  
+    </file>
+    <file path="admin/language/english/common/menu.php">
+        <operation>
+            <search><![CDATA[$_['text_order']]]></search>
+            <add position="before"><![CDATA[
+                $_['text_payfull_history'] =    'Payfull history';
+            ]]></add>
+        </operation>
+    </file>
     <file path="admin/controller/common/menu.php">
         <operation>
             <search><![CDATA[$data['text_order']]]></search>
@@ -21,7 +29,7 @@
                 $data['payfull_history'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'], 'SSL');
             ]]></add>
         </operation>
-    </file> 
+    </file>
     <file path="admin/view/template/common/menu.tpl">
         <operation>
             <search><![CDATA[<?php echo $text_order; ?></a></li>]]></search>
@@ -29,5 +37,5 @@
                 <li><a href="<?php echo $payfull_history; ?>"><?php echo $text_payfull_history; ?></a></li>
             ]]></add>
         </operation>
-    </file> 
+    </file>
 </modification>
