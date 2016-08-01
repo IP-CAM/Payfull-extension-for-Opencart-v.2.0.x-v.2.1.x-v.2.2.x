@@ -83,6 +83,7 @@ class ControllerSalePayfull extends Controller {
 	}
 
 	protected function getList() {
+
 		if (isset($this->request->get['filter_payfull_order_id'])) {
 			$filter_payfull_order_id = $this->request->get['filter_payfull_order_id'];
 		} else {
@@ -140,7 +141,7 @@ class ControllerSalePayfull extends Controller {
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
-			$sort = 'r.payfull_order_id';
+			$sort = 'po.order_id';
 		}
 
 		if (isset($this->request->get['order'])) {
@@ -223,18 +224,18 @@ class ControllerSalePayfull extends Controller {
 
 		$filter_data = array(
 			'filter_payfull_order_id'        => $filter_payfull_order_id,
-			'filter_order_id'         => $filter_order_id,
+			'filter_order_id'         		=> $filter_order_id,
 			'filter_transaction_id'         => $filter_transaction_id,
-			'filter_bank_id'         => $filter_bank_id,
-			'filter_status'         => $filter_status,
-			'filter_use3d'          => $filter_use3d,
-			'filter_client_ip'            => $filter_client_ip,
-			'filter_installments' => $filter_installments,
-			'filter_date_added'       => $filter_date_added,
-			'sort'                    => $sort,
-			'order'                   => $order,
-			'start'                   => ($page - 1) * $this->config->get('config_limit_admin'),
-			'limit'                   => $this->config->get('config_limit_admin')
+			'filter_bank_id'         		=> $filter_bank_id,
+			'filter_status'         		=> $filter_status,
+			'filter_use3d'          		=> $filter_use3d,
+			'filter_client_ip'            	=> $filter_client_ip,
+			'filter_installments' 			=> $filter_installments,
+			'filter_date_added'       		=> $filter_date_added,
+			'sort'                    		=> $sort,
+			'order'                   		=> $order,
+			'start'                   		=> ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'                   		=> $this->config->get('config_limit_admin')
 		);
 
 		$payfull_total = $this->model_sale_payfull->getTotalPayfulls($filter_data);
@@ -243,18 +244,18 @@ class ControllerSalePayfull extends Controller {
 
 		foreach ($results as $result) {
 			$data['transactions'][] = array(
-				'payfull_order_id'   => $result['payfull_order_id'],
-				'order_id'      	 => $result['order_id'],
-				'transaction_id' 	 => $result['transaction_id'],
-				'total' 			 => $result['total'],
-				'try_total' 		 => $result['try_total'],
-				'conversion_rate' 	 => $result['conversion_rate'],
-				'bank_id' 	 => $result['bank_id'],
-				'use3d'       	 => $result['use3d']?$this->language->get('text_yes'):$this->language->get('text_no'),
-				'client_ip'       	 => $result['client_ip'],
-				'installments'        	     => $result['installments'],
-				'status'            => $result['status']?$this->language->get('text_complete'):$this->language->get('text_failed'),
-				'date_added'    => date($this->language->get('date_format_short'), strtotime($result['date_added']))
+				'payfull_order_id'   	=> $result['payfull_order_id'],
+				'order_id'      	 	=> $result['order_id'],
+				'transaction_id' 	 	=> $result['transaction_id'],
+				'total' 			 	=> $result['total'],
+				'try_total' 		 	=> $result['try_total'],
+				'conversion_rate' 	 	=> $result['conversion_rate'],
+				'bank_id' 	 			=> $result['bank_id'],
+				'use3d'       	 		=> $result['use3d']?$this->language->get('text_yes'):$this->language->get('text_no'),
+				'client_ip'       	 	=> $result['client_ip'],
+				'installments'        	=> $result['installments'],
+				'status'            	=> $result['status']?$this->language->get('text_complete'):$this->language->get('text_failed'),
+				'date_added'    		=> date($this->language->get('date_format_short'), strtotime($result['date_added']))
 			);
 		}
 
@@ -380,7 +381,7 @@ class ControllerSalePayfull extends Controller {
 
 		$data['sort_try_total'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'] . '&sort=po.try_total' . $url, 'SSL');
 
-		$data['sort_conversion_rate'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'] . '&sort=op.conversion_rate' . $url, 'SSL');
+		$data['sort_conversion_rate'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'] . '&sort=po.conversion_rate' . $url, 'SSL');
 
 		$data['sort_date_added'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'] . '&sort=po.date_added' . $url, 'SSL');
 
@@ -388,7 +389,7 @@ class ControllerSalePayfull extends Controller {
 
 		$data['sort_status'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'] . '&sort=po.status' . $url, 'SSL');
 
-		$data['sort_status'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'] . '&sort=po.use3d' . $url, 'SSL');
+		$data['sort_use3d'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'] . '&sort=po.use3d' . $url, 'SSL');
 
 		$data['sort_client_ip'] = $this->url->link('sale/payfull', 'token=' . $this->session->data['token'] . '&sort=po.client_ip' . $url, 'SSL');
 

@@ -103,6 +103,9 @@ class ModelSalePayfull extends Model {
 			$sql .= ' WHERE '.implode(' AND ', $implode);
 		}
 
+		$sql .= " ORDER BY " . $data['sort'];
+		$sql .= " ".$data['order'];
+
 		return $this->db->query($sql)->rows;
 	}
 }
