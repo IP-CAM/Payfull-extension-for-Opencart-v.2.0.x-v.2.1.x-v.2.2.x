@@ -5,7 +5,7 @@
     <author>Payfull</author>
     <code>Payfull</code>
     <link>http://www.payfull.com</link>
-    <file path="admin/language/english/common/menu.php">
+    <file path="admin/language/en-gb/common/menu.php">
         <operation>
             <search><![CDATA[$_['text_order']]]></search>
             <add position="before"><![CDATA[
