@@ -255,7 +255,7 @@
   }
 
   .input-cc-number-not-supported {
-    background: rgba(0, 0, 0, 0) url("<?php echo $not_supported_img_path; ?>") no-repeat scroll right center / 4% auto;
+    background: rgba(0, 0, 0, 0) url("<?php echo $not_supported_img_path; ?>") no-repeat scroll right center / 8% auto;
     float: left;
   }
 
