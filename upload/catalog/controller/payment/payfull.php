@@ -340,7 +340,7 @@ class ControllerPaymentPayfull extends Controller {
     }
 
     public function checkCCEXPDate($month, $year){
-        if(strtotime('01/'.$month.'/'.$year) <= time()){
+        if(strtotime('01-'.$month.'-'.$year) <= time()){
             return false;
         }
         return true;
