@@ -10,7 +10,7 @@ $_['text_edit']                     = 'Edit Payfull';
 $_['text_payfull']					= '<a href="https://www.payfull.com" target="_blank"><img src="view/image/payment/payfull.png" alt="Payfull" title="Payfull" /></a>';
 
 // Entry
-$_['entry_username']				= 'Username'; 
+$_['entry_username']				= 'Username';
 $_['entry_password']				= 'Password';
 $_['entry_test']					= 'Sandbox Mode';
 $_['entry_total']					= 'Total';
