@@ -185,7 +185,7 @@ class ControllerPaymentPayfull extends Controller {
 		$responseData = json_decode($response, true);
 
 		if (isset($responseData['ErrorCode'])) {
-			//for successfull payment without error 
+			//for successful payment without error
 			if($responseData['ErrorCode'] == '00'){
 
 				$this->model_payment_payfull->saveResponse($responseData);
