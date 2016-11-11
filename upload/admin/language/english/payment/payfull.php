@@ -24,6 +24,7 @@ $_['entry_endpoint'] 				= 'Endpoint';
 
 $_['entry_3dsecure_status'] 		= '3dsecure';
 $_['entry_installment_status'] 		= 'Installments';
+$_['entry_extra_installment_status']= 'Extra Installments (Vadaa)';
 
 // Help
 $_['help_total']					= 'The checkout total the order must reach before this payment method becomes active.';

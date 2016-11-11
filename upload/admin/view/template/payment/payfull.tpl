@@ -68,6 +68,22 @@
           </div>
 
           <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-test"><?php echo $entry_extra_installment_status; ?>
+            </label>
+            <div class="col-sm-10">
+              <select class="form-control" name="payfull_extra_installment_status">
+                <?php if($payfull_extra_installment_status == 1) { ?>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <option value="0"><?php echo $text_disabled; ?></option>
+                <?php } else { ?>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                <?php } ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
             <label class="col-sm-2 control-label" for="input-username"><?php echo $entry_username; ?></label>
             <div class="col-sm-10">
               <input type="text" name="payfull_username" value="<?php echo $payfull_username; ?>" placeholder="<?php echo $entry_username; ?>" id="input-username" class="form-control" />

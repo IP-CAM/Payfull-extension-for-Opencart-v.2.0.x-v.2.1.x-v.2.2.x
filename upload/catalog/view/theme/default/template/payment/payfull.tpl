@@ -63,6 +63,12 @@
       </div> 
     </div>
 
+      <div class="form-group  extra_installments_container" style="display: none;">
+          <div class="col-sm-10 col-sm-offset-2 extra_installments_select">
+                  <label class=""><?php echo $text_extra_installments; ?></label>
+          </div>
+      </div>
+
     <input name="use3d" type="hidden" value="0" />
 
     <div class="form-group use-3d-wrapper" style="<?php echo ($payfull_3dsecure_status==0)?'display: none':''; ?>">
@@ -228,33 +234,76 @@
                 var oneShotInsTotal   = json['installments']['0']['installment_total'];
                 var oneShotTotal      = json['installments']['0']['total'];
                 var oneShotSelected   = 1;
-                $options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
+                //$options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
                 if(json['installments'].length > 0 && json['card_type'] == 'CREDIT'){
                     for($i=1; $i < json['installments'].length; $i++){
                         var installment_total       = json['installments'][$i]['installment_total'];
                         var count                   = json['installments'][$i]['count'];
                         var total                   = json['installments'][$i]['total'];
-                        $options.append(getInstallementOption(count, installment_total, total, 0));
+                        $options.append(getInstallementOption(count, installment_total, total, 0, json['bank_id']));
                     }
                 }
             }
         });
     };
 
-    function getInstallementOption(count, instalment_total, total, checked) {
+    function getInstallementOption(count, instalment_total, total, checked, bank_id) {
         if(checked) checked = 'checked="checked"';
         else checked = '';
 
         return ''
                 + '<div class="installment_row">'
                 + '<div class="install_body_label installment_radio">'
-                + '<input rel="'+count+'" class="custom_field_installment_radio" type="radio" '+checked+' name="installments" value="'+count+'" />'
+                + '<input data-bank-id="'+bank_id+'" rel="'+count+'" class="custom_field_installment_radio" type="radio" '+checked+' name="installments" value="'+count+'" />'
                 + '</div>'
                 + '<div class="install_body_label installment_lable_code">'+count+'</div>'
                 + '<div class="install_body_label">'+ instalment_total + '</div>'
                 + '<div rel="' + total + '" class="install_body_label final_commi_price">' +total + '</div>'
                 + '</div>'
                 ;
+    }
+
+    $(document).on('click', '.installment_radio', function() {
+        var selectedInstallmentCount = $("input[name='installments']:checked").val();
+        var selectedInstallmentBank  = $("input[name='installments']:checked").attr('data-bank-id');
+        getExtraInstallments(selectedInstallmentCount, selectedInstallmentBank);
+
+    });
+    function getExtraInstallments(selectedInstallmentCount, selectedInstallmentBank) {
+
+        containerSelector = $('.extra_installments_container');
+
+        $.ajax({
+            url: 'index.php?route=payment/payfull/get_extra_installments&inst='+selectedInstallmentCount+'&bank='+selectedInstallmentBank,
+            type: 'post',
+            data: $('#payment :input'),
+            dataType: 'json',
+
+            beforeSend: function() {
+                $('.alert').remove();
+                $('#button-confirm').attr('disabled', true);
+                $('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $text_wait; ?></div>');
+            },
+
+            complete: function() {
+                $('#button-confirm').attr('disabled', false);
+                $('.attention').remove();
+            },
+
+            success: function(json) {
+                if(json['extra_inst'] != ''){
+                    var selectExtraInstallments = "<select name='extra_installmet' class='form-control'>";
+                    var extra_inst = json['extra_inst'];
+                    $.each(extra_inst, function( index, value ) {
+                        var option = '<option value="'+value+'">'+index+'</option>';
+                        selectExtraInstallments = selectExtraInstallments+option;
+                    });
+                    selectExtraInstallments = selectExtraInstallments+'</select>';
+                    containerSelector.css('display', 'block');
+                    containerSelector.html(selectExtraInstallments);
+                }
+            }
+        });
     }
 
 //--></script>

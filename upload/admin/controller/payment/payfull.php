@@ -38,7 +38,8 @@ class ControllerPaymentPayfull extends Controller {
 
 		$data['entry_3dsecure_status'] = $this->language->get('entry_3dsecure_status');
 		$data['entry_installment_status'] = $this->language->get('entry_installment_status');
-		
+		$data['entry_extra_installment_status'] = $this->language->get('entry_extra_installment_status');
+
 		$data['help_total'] = $this->language->get('help_total');
 
 		$data['button_save'] = $this->language->get('button_save');
@@ -87,6 +88,12 @@ class ControllerPaymentPayfull extends Controller {
 			$data['payfull_installment_status'] = $this->request->post['payfull_installment_status'];
 		} else {
 			$data['payfull_installment_status'] = $this->config->get('payfull_installment_status');
+		}
+
+		if (isset($this->request->post['payfull_extra_installment_status'])) {
+			$data['payfull_extra_installment_status'] = $this->request->post['payfull_extra_installment_status'];
+		} else {
+			$data['payfull_extra_installment_status'] = $this->config->get('payfull_extra_installment_status');
 		}
 
 		if (isset($this->request->post['payfull_username'])) {

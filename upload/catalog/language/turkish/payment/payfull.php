@@ -5,6 +5,7 @@ $_['text_payfull']      = 'Kredi Kartı İle Öde (PAYFULL)';
 $_['text_title']        = 'Payfull Payment Gateway';
 $_['text_3d']           = '3D Secure Kullanın';
 $_['text_installments'] = 'Taksit';
+$_['text_extra_installments'] = 'Extra Installments (Vadaa)';
 $_['text_credit_card']  = 'Kredi Kartı/Banka Kartı';
 $_['text_wait']         = 'Bekleyiniz';
 $_['text_invalid_card'] = 'Hatalı Kart Numarası';

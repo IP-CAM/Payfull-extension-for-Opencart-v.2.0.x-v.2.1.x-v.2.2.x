@@ -13,6 +13,7 @@ class ModelPaymentPayfull extends Model {
 			  `use3d`  tinyint(1) NOT NULL, 
 			  `client_ip` varchar(50) NOT NULL,
 			  `installments` int(11) NOT NULL,
+			  `extra_installments` int(11) NOT NULL,
 			  `ErrorMSG` text NOT NULL,
 			  `ErrorCode` varchar(255) NOT NULL,
 			  `conversion_rate` DECIMAL( 10, 2 ) NOT NULL,

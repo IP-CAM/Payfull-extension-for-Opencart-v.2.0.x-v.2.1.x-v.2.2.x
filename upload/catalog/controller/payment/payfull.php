@@ -47,7 +47,8 @@ class ControllerPaymentPayfull extends Controller {
 		$data['text_credit_card'] = $this->language->get('text_credit_card');
 		$data['text_3d'] = $this->language->get('text_3d');
 		$data['text_installments'] = $this->language->get('text_installments');
-		$data['text_wait'] = $this->language->get('text_wait'); 
+		$data['text_extra_installments'] = $this->language->get('text_extra_installments');
+		$data['text_wait'] = $this->language->get('text_wait');
 		$data['text_loading'] = $this->language->get('text_loading');
 
         if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
@@ -162,6 +163,51 @@ class ControllerPaymentPayfull extends Controller {
 			$bank_info['installments']
 		);
 
+
+		header('Content-type: text/json');
+		echo json_encode($json);
+		exit;
+	}
+
+	public function get_extra_installments(){
+		$this->load->model('checkout/order');
+		$this->load->model('payment/payfull');
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
+		//default data
+		$total              = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
+		$installments 	    = $this->request->get['inst'];
+		$bank_id 	        = $this->request->get['bank'];
+		$json 		        = array();
+		$json['extra_inst'] = [];
+
+		//no cc number
+		if(empty($this->request->get['inst']) OR empty($this->request->get['bank'])){
+			header('Content-type: text/json');
+			echo json_encode($json);
+			exit;
+		}
+
+		//get info from API about extra instalments
+		$extra_installments_info 	= json_decode($this->model_payment_payfull->getExtraInstallments(), true);
+
+		//no correct response
+		if(!isset($extra_installments_info['data']['campaigns'])) {
+			header('Content-type: text/json');
+			echo json_encode($json);
+			exit;
+		}
+
+		foreach($extra_installments_info['data']['campaigns'] as $extra_installments_row){
+			if(
+				$extra_installments_row['bank_id']           == $bank_id AND
+				$extra_installments_row['min_amount']        < ($total*$extra_installments_info['data']['exchange_rate']) AND
+				$extra_installments_row['base_installments'] == $installments AND
+				$extra_installments_row['status']            == 1
+			){
+				$json['extra_inst'][$extra_installments_row['extra_installments']] = $extra_installments_row['campaign_id'];
+			}
+		}
 
 		header('Content-type: text/json');
 		echo json_encode($json);

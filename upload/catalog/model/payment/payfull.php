@@ -6,11 +6,31 @@ class ModelPaymentPayfull extends Model {
 
 	public function getInstallments(){
 		$params = array(
-		    //"merchant"        => 'api_merch',
 		    "type"            => 'Get',
 		    "get_param"       => 'Installments',
 		    "language"        => 'tr',
 		    "client_ip"       => $_SERVER['REMOTE_ADDR']
+		);
+
+		return $this->call($params);
+	}
+
+	public function getExtraInstallments(){
+		$extraInstallmentsStatus = $this->config->get('payfull_extra_installment_status');
+		if(!$extraInstallmentsStatus){
+			return json_encode([]);
+		}
+
+		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$currency   = $order_info['currency_code'];
+
+		$params = array(
+			"type"            => 'Get',
+			"get_param"       => 'ExtraInstallmentsCampaigns',
+			"language"        => 'tr',
+			"client_ip"       => $_SERVER['REMOTE_ADDR'],
+			"exchange_rate"   => 1,
+			"currency"        => $currency
 		);
 
 		return $this->call($params);
