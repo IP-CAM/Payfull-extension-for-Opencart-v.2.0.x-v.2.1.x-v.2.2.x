@@ -51,7 +51,6 @@ class ModelPaymentPayfull extends Model {
 
 	//save transaction history 
 	public function saveResponse($data){
-
 		$sql = "insert into `".DB_PREFIX."payfull_order` SET 
 		  `order_id` = '".$data['passive_data']."',
 		  `transaction_id` = '".$data['transaction_id']."',
@@ -60,6 +59,8 @@ class ModelPaymentPayfull extends Model {
 		  `use3d` = '".$data['use3d']."',
 		  `client_ip` = '".$_SERVER['REMOTE_ADDR']."',
 		  `installments` = '".$data['installments']."',
+		  `extra_installments` = '".$data['extra_installments']."',
+		  `campaign_id` = '".$data['campaign_id']."',
 		  `ErrorMSG` = '".$data['ErrorMSG']."',
 		  `ErrorCode` = '".$data['ErrorCode']."',
 		  `conversion_rate` = '".$data['conversion_rate']."',
@@ -122,6 +123,10 @@ class ModelPaymentPayfull extends Model {
 		
 		if(isset($this->session->data['gateway'])){
 			$params["gateway"] = $this->session->data['gateway'];//'160',//[optional] set bank_id if the installments more than 1
+		}
+
+		if(isset($this->request->post['campaign_id'])){
+			$params["campaign_id"] = $this->request->post['campaign_id'];//campaign_id for extra installments
 		}
 
 		return $this->call($params);

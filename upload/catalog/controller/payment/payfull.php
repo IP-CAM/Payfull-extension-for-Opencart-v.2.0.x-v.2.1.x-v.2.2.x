@@ -81,12 +81,12 @@ class ControllerPaymentPayfull extends Controller {
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
 		//default data
-		$defaultTotal 			=	$this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
-		$json 					= array();
-		$json['has3d'] 			= 0;
-		$json['installments'] 	= [['count' => 1, 'installment_total'=>$defaultTotal, 'total'=>$defaultTotal]];
-		$json['bank_id'] 	    = '';
-		$json['card_type'] 	    = '';
+		$defaultTotal 				=	$this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
+		$json 						= array();
+		$json['has3d'] 				= 0;
+		$json['installments'] 		= [['count' => 1, 'installment_total'=>$defaultTotal, 'total'=>$defaultTotal]];
+		$json['bank_id'] 	    	= '';
+		$json['card_type'] 	    	= '';
 
 		//no cc number
 		if(empty($this->request->post['cc_number'])){
@@ -226,15 +226,16 @@ class ControllerPaymentPayfull extends Controller {
 			exit;
 		}
 
-		$response = $this->model_payment_payfull->send();	
+		$response                           = $this->model_payment_payfull->send();
+		$responseData                       = json_decode($response, true);
+        $responseData['extra_installments'] = isset($responseData['extra_installments'])?$responseData['extra_installments']:0;
+        $responseData['campaign_id']        = isset($responseData['campaign_id'])?$responseData['campaign_id']:0;
 
-		$responseData = json_decode($response, true);
 
-		if (isset($responseData['ErrorCode'])) {
+        if (isset($responseData['ErrorCode'])) {
 			//for successful payment without error
 			if($responseData['ErrorCode'] == '00'){
-
-				$this->model_payment_payfull->saveResponse($responseData);
+                $this->model_payment_payfull->saveResponse($responseData);
 
                 $this->addSubTotalForInstCommission($responseData);
 

@@ -237,7 +237,6 @@
                 var oneShotInsTotal   = json['installments']['0']['installment_total'];
                 var oneShotTotal      = json['installments']['0']['total'];
                 var oneShotSelected   = 1;
-                //$options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
                 if(json['installments'].length > 0 && json['card_type'] == 'CREDIT'){
                     for($i=1; $i < json['installments'].length; $i++){
                         var installment_total       = json['installments'][$i]['installment_total'];
@@ -245,6 +244,8 @@
                         var total                   = json['installments'][$i]['total'];
                         $options.append(getInstallementOption(count, installment_total, total, 0, json['bank_id']));
                     }
+                }else{
+                    $options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
                 }
             }
         });
@@ -295,8 +296,9 @@
             },
 
             success: function(json) {
+                $('.alert').remove();
                 if(json['extra_inst'] != ''){
-                    var selectExtraInstallments = "<select name='extra_installment' class='form-control'>";
+                    var selectExtraInstallments = "<select name='campaign_id' class='form-control'>";
                     var extra_inst = json['extra_inst'];
                     $.each(extra_inst, function( index, value ) {
                         var option = '<option value="'+value+'">+ '+index+'</option>';
@@ -307,7 +309,7 @@
                     divSelectorExtraInst.css('display', 'block');
                 }else{
                     containerSelectorInst.html('');
-                    divSelectorExtraInst.css('display', 'block');
+                    divSelectorExtraInst.css('display', 'none');
                 }
             }
         });
