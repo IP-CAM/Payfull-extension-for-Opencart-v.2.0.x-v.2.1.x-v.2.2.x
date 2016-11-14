@@ -15,6 +15,27 @@ class ModelPaymentPayfull extends Model {
 		return $this->call($params);
 	}
 
+	public function getOneShotCommission(){
+		$params = array(
+			"type"                 => 'Get',
+			"get_param"            => 'Installments',
+			"language"             => 'tr',
+			"client_ip"            => $_SERVER['REMOTE_ADDR'],
+			"one_shot_commission"  => 1
+		);
+
+		return $this->call($params);
+	}
+
+	public function getOneShotTotal($total){
+		$oneShotCommission 	= json_decode($this->getOneShotCommission(), true);
+		if(!isset($oneShotCommission['data']['commission'])) return $total;
+		$commission        	= $oneShotCommission['data']['commission'];
+		$commission 		= str_replace('%', '', $commission);
+		$total      		= $total + ($total * $commission/100);
+		return number_format($total, 2, '.', '');
+	}
+
 	public function getExtraInstallments(){
 		$extraInstallmentsStatus = $this->config->get('payfull_extra_installment_status');
 		if(!$extraInstallmentsStatus){
@@ -125,7 +146,7 @@ class ModelPaymentPayfull extends Model {
 			$params["gateway"] = $this->session->data['gateway'];//'160',//[optional] set bank_id if the installments more than 1
 		}
 
-		if(isset($this->request->post['campaign_id'])){
+		if(isset($this->request->post['campaign_id']) AND $this->request->post['campaign_id'] != '' AND $this->request->post['campaign_id']){
 			$params["campaign_id"] = $this->request->post['campaign_id'];//campaign_id for extra installments
 		}
 

@@ -48,6 +48,7 @@ class ControllerPaymentPayfull extends Controller {
 		$data['text_3d'] = $this->language->get('text_3d');
 		$data['text_installments'] = $this->language->get('text_installments');
 		$data['text_extra_installments'] = $this->language->get('text_extra_installments');
+		$data['text_select_extra_inst'] = $this->language->get('text_select_extra_inst');
 		$data['text_wait'] = $this->language->get('text_wait');
 		$data['text_loading'] = $this->language->get('text_loading');
 
@@ -79,6 +80,7 @@ class ControllerPaymentPayfull extends Controller {
 		$this->load->model('checkout/order');
 		$this->load->model('payment/payfull');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $order_info['total'] = $this->model_payment_payfull->getOneShotTotal($order_info['total']);
 
 		//default data
 		$defaultTotal 				=	$this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
@@ -96,9 +98,9 @@ class ControllerPaymentPayfull extends Controller {
 		}
 
 		//get info from API about bank + card + instalments
-		$card_info  		= json_decode($this->model_payment_payfull->get_card_info(), true);
-		$installments_info 	= json_decode($this->model_payment_payfull->getInstallments(), true);
-		$bank_info 			= array();
+		$card_info  		 = json_decode($this->model_payment_payfull->get_card_info(), true);
+		$installments_info 	 = json_decode($this->model_payment_payfull->getInstallments(), true);
+		$bank_info 			 = array();
 
 		//no bank is detected
 		if(!isset($card_info['data']['bank_id']) Or $card_info['data']['bank_id'] == '') {
@@ -117,12 +119,12 @@ class ControllerPaymentPayfull extends Controller {
 			}
 		}
 
-		//card bank is not in the list of installments
-		if(!count($bank_info)) {
-			header('Content-type: text/json');
-			echo json_encode($json);
-			exit;
-		}
+        //still there is no one shot commission
+        if(!count($bank_info)) {
+            header('Content-type: text/json');
+            echo json_encode($json);
+            exit;
+        }
 
 
 		$payfull_3dsecure_status 	= $this->config->get('payfull_3dsecure_status');
@@ -144,6 +146,7 @@ class ControllerPaymentPayfull extends Controller {
 		$json['bank_id'] 				= $bank_info['bank'];
 
 		foreach($bank_info['installments'] as $justNormalKey=>$installment){
+            if($installment['count'] == 1) continue;
 			$commission = $installment['commission'];
 			$commission = str_replace('%', '', $commission);
 			$total      = $order_info['total'] + ($order_info['total'] * $commission/100);
@@ -257,6 +260,7 @@ class ControllerPaymentPayfull extends Controller {
     public function addSubTotalForInstCommission($responseData){
         $this->load->model('checkout/order');
         $this->language->load('payment/payfull');
+        $installmentsCommissionFound        = false;
         $order_info                         = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $payfull_commission_sub_total_title = $this->language->get('commission_sub_total_title');
         $sort_order                         = 0;
@@ -269,9 +273,10 @@ class ControllerPaymentPayfull extends Controller {
             if($temp['bank'] == $responseData['bank_id']) {
                 foreach($temp["installments"] as $installmentInLoop){
                     if($installmentInLoop["count"] == $responseData['installments']){
-                        $installments_number     = $installmentInLoop["count"];
-                        $installments_commission = $installmentInLoop["commission"];
-                        $installments_commission = str_replace('%', '', $installments_commission);
+                        $installments_number         = $installmentInLoop["count"];
+                        $installments_commission     = $installmentInLoop["commission"];
+                        $installments_commission     = str_replace('%', '', $installments_commission);
+                        $installmentsCommissionFound = true;
                         break;
                     }
                 }
@@ -282,7 +287,7 @@ class ControllerPaymentPayfull extends Controller {
         $subTotalText  = $payfull_commission_sub_total_title.' - ('.$installments_number.'Inst '.$installments_commission.'%)'.$this->currency->format($subTotalValue, $order_info['currency_code'], true, true);;
         $newOrderTotal = $subTotalValue + $order_info['total'];
 
-        if($installments_number > 1){
+        if($installmentsCommissionFound){
             $this->db->query("INSERT INTO " . DB_PREFIX . "order_total SET order_id = '" . (int)$order_info['order_id'] . "', code = '" . $this->db->escape('sub_total') . "', title = '" . $this->db->escape($subTotalText) . "', `value` = '" . (float)$subTotalValue . "', sort_order = '" . (int)$sort_order . "'");
             $this->db->query("UPDATE " . DB_PREFIX . "order_total SET `value` = '" . (float)$newOrderTotal . "' WHERE order_id = '" . (int)$order_info['order_id']. "' AND code = 'total'");
             $this->db->query("UPDATE " . DB_PREFIX . "order SET `total` = '" . (float)$newOrderTotal . "' WHERE order_id = '" . (int)$order_info['order_id']. "'");

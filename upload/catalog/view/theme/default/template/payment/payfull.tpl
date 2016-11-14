@@ -237,15 +237,14 @@
                 var oneShotInsTotal   = json['installments']['0']['installment_total'];
                 var oneShotTotal      = json['installments']['0']['total'];
                 var oneShotSelected   = 1;
+                $options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
                 if(json['installments'].length > 0 && json['card_type'] == 'CREDIT'){
-                    for($i=1; $i < json['installments'].length; $i++){
+                    for($i=2; $i < json['installments'].length; $i++){
                         var installment_total       = json['installments'][$i]['installment_total'];
                         var count                   = json['installments'][$i]['count'];
                         var total                   = json['installments'][$i]['total'];
                         $options.append(getInstallementOption(count, installment_total, total, 0, json['bank_id']));
                     }
-                }else{
-                    $options.append(getInstallementOption(oneShotCount, oneShotInsTotal, oneShotTotal, oneShotSelected));
                 }
             }
         });
@@ -299,6 +298,7 @@
                 $('.alert').remove();
                 if(json['extra_inst'] != ''){
                     var selectExtraInstallments = "<select name='campaign_id' class='form-control'>";
+                    selectExtraInstallments = selectExtraInstallments+'<option value=""><?php echo $text_select_extra_inst;?></option>';
                     var extra_inst = json['extra_inst'];
                     $.each(extra_inst, function( index, value ) {
                         var option = '<option value="'+value+'">+ '+index+'</option>';
