@@ -138,11 +138,11 @@ class ModelPaymentPayfull extends Model {
 			$params["installments"] = 1;			
 		}
 		    
-		if(isset($this->session->data['bank_id'])){
+		if(isset($this->session->data['bank_id']) AND $params["installments"] > 1){
 			$params["bank_id"] = $this->session->data['bank_id'];//[optional] set bank_id if the installments more than 1
 		}
 		
-		if(isset($this->session->data['gateway'])){
+		if(isset($this->session->data['gateway'])  AND $params["installments"] > 1){
 			$params["gateway"] = $this->session->data['gateway'];//'160',//[optional] set bank_id if the installments more than 1
 		}
 
