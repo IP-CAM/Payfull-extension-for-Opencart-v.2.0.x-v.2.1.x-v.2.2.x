@@ -243,6 +243,9 @@ class ControllerSalePayfull extends Controller {
 		$results = $this->model_sale_payfull->getPayfulls($filter_data);
 
 		foreach ($results as $result) {
+			if(isset($result['extra_installments']) AND $result['extra_installments']){
+				$result['installments'] .= ' (+'.$result['extra_installments'].')';
+			}
 			$data['transactions'][] = array(
 				'payfull_order_id'   	=> $result['payfull_order_id'],
 				'order_id'      	 	=> $result['order_id'],
