@@ -400,7 +400,7 @@ class ControllerPaymentPayfull extends Controller {
 
 	public function secure(){
 		$html = $this->db->query('select html from `'.DB_PREFIX.'payfull_3d_form` WHERE payfull_3d_form_id = "'.$this->session->data['payfull_3d_form_id'].'"')->row['html'];
-		
+
 		//delete form 
 		$this->db->query('delete from `'.DB_PREFIX.'payfull_3d_form` WHERE payfull_3d_form_id = "'.$this->session->data['payfull_3d_form_id'].'"');
 
@@ -411,11 +411,15 @@ class ControllerPaymentPayfull extends Controller {
 
 		$this->load->model('payment/payfull');
 
-		//save response 
-		$this->model_payment_payfull->saveResponse($this->request->post);
+        $post = $this->request->post;
+        $post['extra_installments'] = isset($post['extra_installments'])?$post['extra_installments']:0;
+        $post['campaign_id']        = isset($post['campaign_id'])?$post['campaign_id']:0;
 
-		if (isset($this->request->post['passive_data'])) {
-			$order_id = $this->request->post['passive_data'];
+		//save response 
+		$this->model_payment_payfull->saveResponse($post);
+
+		if (isset($post['passive_data'])) {
+			$order_id = $post['passive_data'];
 		} else {
 			$order_id = 0;
 		}
@@ -424,8 +428,12 @@ class ControllerPaymentPayfull extends Controller {
 
 		$order_info = $this->model_checkout_order->getOrder($order_id);
 
-		if ($order_info && $this->request->post['ErrorCode'] == '00') {
-			$responseData =  $this->request->post;
+        //hash
+        $merchantPassword = $this->config->get('payfull_password');
+        $hash             = self::generateHash($post, $merchantPassword);
+
+		if ($order_info && $post['ErrorCode'] == '00' && ($hash == $post["hash"])) {
+			$responseData =  $post;
 			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payfull_order_status_id'));
 			$this->addSubTotalForInstCommission($responseData);
 			$this->response->redirect($this->url->link('checkout/success'));
@@ -433,4 +441,19 @@ class ControllerPaymentPayfull extends Controller {
 			$this->response->redirect($this->url->link('checkout/failure'));
 		}
 	}
+
+    protected static function generateHash($params, $password){
+        $arr = [];
+        unset($params['hash']);
+        unset($params['extra_installments']);
+        unset($params['campaign_id']);
+        foreach($params as $param_key=>$param_val){$arr[strtolower($param_key)]=$param_val;}
+        ksort($arr);
+        $hashString_char_count = "";
+        foreach ($arr as $key=>$val) {
+            $hashString_char_count .= mb_strlen($val) . $val;
+        }
+        $hashString_char_count      = strtolower(hash_hmac("sha1", $hashString_char_count, $password));
+        return $hashString_char_count;
+    }
 }
