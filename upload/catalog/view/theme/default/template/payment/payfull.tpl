@@ -64,8 +64,11 @@
     </div>
 
       <div class="form-group  extra_installments_container" style="display: none;">
-          <div class="col-sm-10 col-sm-offset-2 extra_installments_select">
-                  <label class=""><?php echo $text_extra_installments; ?></label>
+          <div class="col-sm-3 col-sm-offset-2">
+              <label><?php echo $text_extra_installments; ?></label>
+              <div class="extra_installments_select"></div>
+          </div>
+          <div class="col-sm-9 col-sm-offset-2">
           </div>
       </div>
 
@@ -271,7 +274,8 @@
     });
     function getExtraInstallments(selectedInstallmentCount, selectedInstallmentBank) {
 
-        containerSelector = $('.extra_installments_container');
+        var divSelectorExtraInst  = $('.extra_installments_container');
+        var containerSelectorInst = $('.extra_installments_select');
 
         $.ajax({
             url: 'index.php?route=payment/payfull/get_extra_installments&inst='+selectedInstallmentCount+'&bank='+selectedInstallmentBank,
@@ -292,15 +296,18 @@
 
             success: function(json) {
                 if(json['extra_inst'] != ''){
-                    var selectExtraInstallments = "<select name='extra_installmet' class='form-control'>";
+                    var selectExtraInstallments = "<select name='extra_installment' class='form-control'>";
                     var extra_inst = json['extra_inst'];
                     $.each(extra_inst, function( index, value ) {
-                        var option = '<option value="'+value+'">'+index+'</option>';
+                        var option = '<option value="'+value+'">+ '+index+'</option>';
                         selectExtraInstallments = selectExtraInstallments+option;
                     });
                     selectExtraInstallments = selectExtraInstallments+'</select>';
-                    containerSelector.css('display', 'block');
-                    containerSelector.html(selectExtraInstallments);
+                    containerSelectorInst.html(selectExtraInstallments);
+                    divSelectorExtraInst.css('display', 'block');
+                }else{
+                    containerSelectorInst.html('');
+                    divSelectorExtraInst.css('display', 'block');
                 }
             }
         });
