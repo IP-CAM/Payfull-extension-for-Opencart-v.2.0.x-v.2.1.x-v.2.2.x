@@ -53,7 +53,7 @@
               <div class="installment_body" id="installment_body">
                   <div class="installment_row">
                       <div class="install_body_label installment_radio"><input rel="1" type="radio" class="installment_radio" checked name="installments" value="1" /></div>
-                      <div class="install_body_label installment_lable_code">1</div>
+                      <div class="install_body_label installment_lable_code"><?php echo $text_one_shot; ?></div>
                       <div class="install_body_label"><?php echo $total; ?></div>
                       <div class="install_body_label final_commi_price" rel="<?php echo $total; ?>"><?php echo $total; ?></div>
                   </div>
@@ -243,23 +243,27 @@
                         var installment_total       = json['installments'][$i]['installment_total'];
                         var count                   = json['installments'][$i]['count'];
                         var total                   = json['installments'][$i]['total'];
-                        $options.append(getInstallementOption(count, installment_total, total, 0, json['bank_id']));
+                        var hasExtra                = json['installments'][$i]['hasExtra'];
+                        $options.append(getInstallementOption(count, installment_total, total, 0, json['bank_id'], hasExtra));
                     }
                 }
             }
         });
     };
 
-    function getInstallementOption(count, instalment_total, total, checked, bank_id) {
+    function getInstallementOption(count, instalment_total, total, checked, bank_id, hasExtra) {
         if(checked) checked = 'checked="checked"';
         else checked = '';
+
+        var textOfCount = count==1?'<?php echo $text_one_shot; ?>' : count;
+        textOfCount     = hasExtra=='1'?'<span class="joker">'+count+' + Joker</span>' : textOfCount;
 
         return ''
                 + '<div class="installment_row">'
                 + '<div class="install_body_label installment_radio">'
                 + '<input data-bank-id="'+bank_id+'" rel="'+count+'" class="custom_field_installment_radio" type="radio" '+checked+' name="installments" value="'+count+'" />'
                 + '</div>'
-                + '<div class="install_body_label installment_lable_code">'+count+'</div>'
+                + '<div class="install_body_label installment_lable_code">'+textOfCount+'</div>'
                 + '<div class="install_body_label">'+ instalment_total + '</div>'
                 + '<div rel="' + total + '" class="install_body_label final_commi_price">' +total + '</div>'
                 + '</div>'
@@ -346,4 +350,12 @@
 .installment_body , .installment_footer {  clear: both; }
 .toatl_label {display:  none;}
 .bank_photo {height: 32px !important;}
+.joker {
+    border-radius: 25px;
+    font-weight: 600;
+    padding: 3px 10px;
+    background: #ff9800;
+    color: white;
+    text-transform: uppercase;
+}
 </style>

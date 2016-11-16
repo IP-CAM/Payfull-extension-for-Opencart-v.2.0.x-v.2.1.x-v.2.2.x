@@ -51,6 +51,7 @@ class ControllerPaymentPayfull extends Controller {
 		$data['text_select_extra_inst'] = $this->language->get('text_select_extra_inst');
 		$data['text_wait'] = $this->language->get('text_wait');
 		$data['text_loading'] = $this->language->get('text_loading');
+		$data['text_one_shot'] = $this->language->get('text_one_shot');
 
         if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
             $base_url = $this->config->get('config_ssl');
@@ -144,6 +145,25 @@ class ControllerPaymentPayfull extends Controller {
 		$this->session->data['gateway'] = $bank_info['gateway'];
 		$json['bank_id'] 				= $bank_info['bank'];
 
+		//get info from API about extra instalments
+		$extraInstallmentsAndInstallmentsArr = [];
+		$extra_installments_info 	         = json_decode($this->model_payment_payfull->getExtraInstallments(), true);
+		if(isset($extra_installments_info['data']['campaigns'])) {
+			foreach($extra_installments_info['data']['campaigns'] as $extra_installments_row){
+				if(
+					$extra_installments_row['bank_id']           == $bank_info['bank'] AND
+					$extra_installments_row['min_amount']        < ($order_info['total']*$extra_installments_info['data']['exchange_rate']) AND
+					$extra_installments_row['status']            == 1 AND
+					$extra_installments_row['gateway']           == $bank_info['gateway']
+				){
+					$extraInstallmentsAndInstallmentsArr[$extra_installments_row['base_installments']] = true;
+				}
+			}
+		}
+
+
+
+
 		foreach($bank_info['installments'] as $justNormalKey=>$installment){
             if($installment['count'] == 1) continue;
 			$commission = $installment['commission'];
@@ -155,6 +175,9 @@ class ControllerPaymentPayfull extends Controller {
 			$installment_total = ($order_info['total'] + ($order_info['total'] * $commission/100))/$installment['count'];
 			$installment_total = $this->currency->format($installment_total, $order_info['currency_code'], true, true);
 			$bank_info['installments'][$justNormalKey]['installment_total'] = $installment_total;
+
+			if(isset($extraInstallmentsAndInstallmentsArr[$installment['count']])) $bank_info['installments'][$justNormalKey]['hasExtra'] = '1';
+			else																   $bank_info['installments'][$justNormalKey]['hasExtra'] = '0';
 		}
 
 

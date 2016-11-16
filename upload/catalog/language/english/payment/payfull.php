@@ -11,6 +11,7 @@ $_['text_credit_card']  = 'Credit card/Debit card';
 $_['text_wait']         = 'wait';
 $_['text_invalid_card'] = 'Invalid card';
 $_['text_loading']      = 'Loading';
+$_['text_one_shot']     = 'One Shot';
 
 $_['button_confirm']    = 'Confirm';
 
