@@ -81,17 +81,19 @@ class ControllerPaymentPayfull extends Controller {
 		$this->load->model('payment/payfull');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $order_info['total'] = $this->model_payment_payfull->getOneShotTotal($order_info['total']);
+        $payfull_3dsecure_status 	= $this->config->get('payfull_3dsecure_status');
+        $payfull_installment_status = $this->config->get('payfull_installment_status');
 
 		//default data
 		$defaultTotal 				=	$this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
 		$json 						= array();
-		$json['has3d'] 				= 0;
+		$json['has3d'] 				= $payfull_3dsecure_status;
 		$json['installments'] 		= [['count' => 1, 'installment_total'=>$defaultTotal, 'total'=>$defaultTotal]];
 		$json['bank_id'] 	    	= '';
 		$json['card_type'] 	    	= '';
 
 		//no cc number
-		if(empty($this->request->post['cc_number'])){
+		if(empty($this->request->post['cc_number']) OR !$payfull_installment_status){
 			header('Content-type: text/json');
 			echo json_encode($json);
 			exit;
@@ -126,9 +128,6 @@ class ControllerPaymentPayfull extends Controller {
             exit;
         }
 
-
-		$payfull_3dsecure_status 	= $this->config->get('payfull_3dsecure_status');
-		$payfull_installment_status = $this->config->get('payfull_installment_status');
 		$oneShotTotal 				= $this->currency->format($order_info['total'], $order_info['currency_code'], true, true);
 		$json['has3d'] 				= ($payfull_3dsecure_status)?1:0;
 
@@ -175,7 +174,8 @@ class ControllerPaymentPayfull extends Controller {
 	public function get_extra_installments(){
 		$this->load->model('checkout/order');
 		$this->load->model('payment/payfull');
-		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$order_info 		= $this->model_checkout_order->getOrder($this->session->data['order_id']);
+		$installments_info  = json_decode($this->model_payment_payfull->getInstallments(), true);
 
 		//default data
 		$total              = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
@@ -189,6 +189,15 @@ class ControllerPaymentPayfull extends Controller {
 			header('Content-type: text/json');
 			echo json_encode($json);
 			exit;
+		}
+
+		//get gateway
+		$gateway = '';
+		foreach($installments_info['data'] as $temp) {
+			if($temp['bank'] == $bank_id) {
+				$gateway = $temp['gateway'];
+				break;
+			}
 		}
 
 		//get info from API about extra instalments
@@ -206,7 +215,8 @@ class ControllerPaymentPayfull extends Controller {
 				$extra_installments_row['bank_id']           == $bank_id AND
 				$extra_installments_row['min_amount']        < ($total*$extra_installments_info['data']['exchange_rate']) AND
 				$extra_installments_row['base_installments'] == $installments AND
-				$extra_installments_row['status']            == 1
+				$extra_installments_row['status']            == 1 AND
+				$extra_installments_row['gateway']           == $gateway
 			){
 				$json['extra_inst'][$extra_installments_row['extra_installments']] = $extra_installments_row['campaign_id'];
 			}
@@ -445,8 +455,6 @@ class ControllerPaymentPayfull extends Controller {
     protected static function generateHash($params, $password){
         $arr = [];
         unset($params['hash']);
-        unset($params['extra_installments']);
-        unset($params['campaign_id']);
         foreach($params as $param_key=>$param_val){$arr[strtolower($param_key)]=$param_val;}
         ksort($arr);
         $hashString_char_count = "";

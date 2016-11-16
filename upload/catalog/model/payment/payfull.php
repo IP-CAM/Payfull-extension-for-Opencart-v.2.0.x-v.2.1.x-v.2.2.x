@@ -47,7 +47,7 @@ class ModelPaymentPayfull extends Model {
 
 		$params = array(
 			"type"            => 'Get',
-			"get_param"       => 'ExtraInstallmentsCampaigns',
+			"get_param"       => 'ExtraInstallmentsList',
 			"language"        => 'tr',
 			"client_ip"       => $_SERVER['REMOTE_ADDR'],
 			"exchange_rate"   => 1,
