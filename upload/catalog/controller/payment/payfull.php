@@ -293,8 +293,21 @@ class ControllerPaymentPayfull extends Controller {
             }
         }
 
+		//get extra installments
+		$sql 		 = "SELECT * from `".DB_PREFIX."payfull_order` where order_id = '" . (int)$order_info['order_id'] . "'";
+		$transaction = $this->db->query($sql)->row;
+		if(isset($transaction['extra_installments']) AND $transaction['extra_installments'] != '' AND $transaction['extra_installments'] > 0){
+			$installments_number .= ' +'.$transaction['extra_installments'];
+		}
+
+		if($installments_number == '1'){
+			$installments_number = '';
+		}else{
+			$installments_number = '  ('.$installments_number.') ';
+		}
+
         $subTotalValue = $order_info['total'] * ($installments_commission/100);
-        $subTotalText  = $payfull_commission_sub_total_title.' - ('.$installments_number.'Inst '.$installments_commission.'%)'.$this->currency->format($subTotalValue, $order_info['currency_code'], true, true);;
+        $subTotalText  = $payfull_commission_sub_total_title.$installments_number.' '.$installments_commission.'% '.$this->currency->format($subTotalValue, $order_info['currency_code'], true, true);;
         $newOrderTotal = $subTotalValue + $order_info['total'];
 
         if($installmentsCommissionFound){

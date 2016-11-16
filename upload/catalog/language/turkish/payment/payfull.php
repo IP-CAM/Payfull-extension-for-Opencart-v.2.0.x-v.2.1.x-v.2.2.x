@@ -33,5 +33,5 @@ $_['entry_payfull_installmet']  = 'Taksit';
 $_['entry_payfull_amount']      = 'Tutar / Ay';
 $_['entry_payfull_total']       = 'Toplam Tutar';
 
-$_['commission_sub_total_title'] = 'Taksit Komisyonu';
+$_['commission_sub_total_title'] = 'Komisyonu';
 

@@ -33,4 +33,4 @@ $_['entry_payfull_installmet']  = 'Installment';
 $_['entry_payfull_amount']      = 'Amount / Month';
 $_['entry_payfull_total']       = 'Total';
 
-$_['commission_sub_total_title'] = 'Inst Commission';
+$_['commission_sub_total_title'] = 'Commission';
