@@ -25,11 +25,7 @@ $_['entry_endpoint'] 				= 'Endpoint';
 $_['entry_3dsecure_status'] 		= '3dsecure';
 $_['entry_installment_status'] 		= 'Installments';
 $_['entry_extra_installment_status']= 'Extra Installments (Vadaa)';
-
-// Help
-$_['help_total']					= 'The checkout total the order must reach before this payment method becomes active.';
-$_['help_test']						= 'Use the live or testing (sandbox) gateway server to process transactions?';
-
+$_['entry_bkm_status']              = 'BKM Express';
 
 // Error
 $_['error_permission']				= 'Warning: You do not have permission to modify Payfull module!';

@@ -1,38 +1,35 @@
 <?php
+// Heading
+$_['heading_title']					= 'Payfull Ödeme Girişi';
 
 // Text
-$_['text_payfull']      = 'Kredi Kartı İle Öde (PAYFULL)';
-$_['text_title']        = 'Payfull Payment Gateway';
-$_['text_3d']           = '3D Secure Kullanın';
-$_['text_installments'] = 'Taksit';
-$_['text_extra_installments'] = 'Artı Taksit';
-$_['text_select_extra_inst']  = '- Seçen -';
-$_['text_credit_card']  = 'Kredi Kartı/Banka Kartı';
-$_['text_wait']         = 'Bekleyiniz';
-$_['text_invalid_card'] = 'Hatalı Kart Numarası';
-$_['text_loading']      = 'Bekleyiniz';
-$_['text_one_shot']     = 'Tek Çekim';
+$_['text_payment']					= 'Ödeme';
+$_['text_success']					= 'Başarılı: Payfull ödeme modülünü değiştirdiniz!';
+$_['text_edit']                     = 'Payfullu Düzenle';
 
-$_['button_confirm']    = 'Ödemeyi Tamamla';
+$_['text_payfull']					= '<a href="https://www.payfull.com" target="_blank"><img src="view/image/payment/payfull.png" alt="Payfull" title="Payfull" /></a>';
 
-$_['entry_cc_month']     = 'Ay';
-$_['entry_cc_year']      = 'Yıl';
-$_['entry_cc_name']      = 'Kart Üzerindeki İsim';
-$_['entry_cc_number']    = 'Kart Numarası';
-$_['entry_cc_date']      = 'Son Kullanma Tarihi';
-$_['entry_cc_cvc']       = 'Güvenlik Kodu';
+// Entry
+$_['entry_username']				= 'Kullanıcı Adı';
+$_['entry_password']				= 'Şifre';
+$_['entry_test']					= 'Koruma Modu';
+$_['entry_total']					= 'Toplam';
+$_['entry_order_status']			= 'Sipariş Durumu';
+$_['entry_geo_zone']				= 'Coğrafi Bölge';
+$_['entry_status']					= 'Durum';
+$_['entry_sort_order']				= 'Sıralama Düzeni';
+$_['entry_yes']						= 'Evet';
+$_['entry_no']						= 'Hayır';
+$_['entry_endpoint'] 				= 'Bitiş Noktası';
 
-$_['entry_field_required']      = 'Bu Alanı Doldurmalısınız';
-$_['entry_field_is_not_number'] = 'Buraya Sayısal Bir Değer Girmeyiniz';
-$_['entry_field_is_long']       = 'Lütfen Daha Kısa Bir İçerik Giriniz';
-$_['entry_cc_not_supported']    = 'Lütfen Geçirli Kart Numarası Giriniz.';
-$_['entry_cc_cvc_wrong']        = 'Lütfen Geçirli Bir Güvenlik Numarası Giriniz';
-$_['entry_cc_date_wrong']       = 'Kartınızın Son Kullanma Tarihini Hatalı Girdiniz';
-$_['entry_3d_not_available']    = '3D Secure Aktif Değildir';
+$_['entry_3dsecure_status'] 		= '3d güvenlik';
+$_['entry_installment_status'] 		= 'Taksitler';
+$_['entry_extra_installment_status']= 'Ekstra Taksitler(Vadaa)';
 
-$_['entry_payfull_installmet']  = 'Taksit';
-$_['entry_payfull_amount']      = 'Tutar / Ay';
-$_['entry_payfull_total']       = 'Toplam Tutar';
+// Help
+$_['help_total']					= 'The checkout total the order must reach before this payment method becomes active.';
+$_['help_test']						= 'Gerçek ortam veya test ortamı bilgileri giriniz.';
 
-$_['commission_sub_total_title'] = 'Komisyonu';
 
+// Error
+$_['error_permission']				= 'Uyarı: Payfull modülünde değişiklik yapmaya yetkili değilsin!';

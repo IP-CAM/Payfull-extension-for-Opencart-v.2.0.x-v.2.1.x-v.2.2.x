@@ -276,6 +276,7 @@
         getExtraInstallments(selectedInstallmentCount, selectedInstallmentBank);
 
     });
+
     function getExtraInstallments(selectedInstallmentCount, selectedInstallmentBank) {
 
         var divSelectorExtraInst  = $('.extra_installments_container');

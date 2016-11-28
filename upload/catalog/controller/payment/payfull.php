@@ -176,8 +176,10 @@ class ControllerPaymentPayfull extends Controller {
 			$installment_total = $this->currency->format($installment_total, $order_info['currency_code'], true, true);
 			$bank_info['installments'][$justNormalKey]['installment_total'] = $installment_total;
 
-			if(isset($extraInstallmentsAndInstallmentsArr[$installment['count']])) $bank_info['installments'][$justNormalKey]['hasExtra'] = '1';
-			else																   $bank_info['installments'][$justNormalKey]['hasExtra'] = '0';
+			if($this->config->get('payfull_extra_installment_status')){
+				if(isset($extraInstallmentsAndInstallmentsArr[$installment['count']])) $bank_info['installments'][$justNormalKey]['hasExtra'] = '1';
+				else																   $bank_info['installments'][$justNormalKey]['hasExtra'] = '0';
+			}
 		}
 
 
