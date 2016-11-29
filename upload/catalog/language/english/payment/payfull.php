@@ -7,11 +7,18 @@ $_['text_3d']           = 'Use 3D secure Payments System';
 $_['text_installments'] = 'Installments';
 $_['text_extra_installments'] = 'Extra Installments';
 $_['text_select_extra_inst']  = '- Select -';
-$_['text_credit_card']  = 'Credit card/Debit card';
-$_['text_wait']         = 'wait';
-$_['text_invalid_card'] = 'Invalid card';
-$_['text_loading']      = 'Loading';
-$_['text_one_shot']     = 'One Shot';
+$_['text_credit_card']    = 'Credit card/Debit card';
+$_['text_wait']           = 'wait';
+$_['text_invalid_card']   = 'Invalid card';
+$_['text_loading']        = 'Loading';
+$_['text_one_shot']       = 'One Shot';
+$_['text_bkm']            = 'BKM Express';
+$_['text_bkm_explanation']= '
+BKM Express is a payment system that makes online shopping fast,
+easy and joyful, developed with BKM, banks and leading companies of e-commerce area.
+Card owners can shop without sharing any card information online by saving their cards on BKM Express.
+The places of business that accept card on e-commerce websites can approach more customers as a Member Place of Business of BKM Express.
+';
 
 $_['button_confirm']    = 'Confirm';
 
@@ -29,6 +36,7 @@ $_['entry_cc_not_supported']    = 'Please enter a valid credit card number.';
 $_['entry_cc_cvc_wrong']        = 'Please enter a valid credit card verification number.';
 $_['entry_cc_date_wrong']       = 'Incorrect credit card expiration date.';
 $_['entry_3d_not_available']    = '3D Secure Is Not Available';
+$_['entry_bkm_not_available']   = 'BKM Express Is Not Available';
 
 $_['entry_payfull_installmet']  = 'Installment';
 $_['entry_payfull_amount']      = 'Amount / Month';

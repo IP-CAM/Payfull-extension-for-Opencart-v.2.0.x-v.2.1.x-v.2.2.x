@@ -1,87 +1,102 @@
 <form class="form-horizontal">
   <fieldset id="payment">
-    <legend><?php echo $text_credit_card; ?></legend>
-    <div class="form-group required">
-      <label class="col-sm-2 control-label" for="input-cc-type"><?php echo $entry_cc_name; ?></label>
-      <div class="col-sm-6">
-        <input type="text" name="cc_name" value="" placeholder="<?php echo $entry_cc_name; ?>" id="input-cc-name" class="form-control" />
-      </div>
-      <div class="col-sm-4"></div>
-    </div>
-    <div class="form-group required">
-      <label class="col-sm-2 control-label" for="input-cc-number"><?php echo $entry_cc_number; ?></label>
-      <div class="col-sm-6">
-        <input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input-cc-number" class="input-cc-number-not-supported form-control" maxlength="16" />
-      </div>
-      <div class="col-sm-4"></div>
-    </div>
-    <div class="form-group required">
-      <label class="col-sm-2 control-label" for="input-cc-start-date"><?php echo $entry_cc_date; ?></label>
-      <div class="col-sm-3">
-        <select name="cc_month" id="input-cc-start-date" class="form-control">
-          <?php foreach ($month_valid as $month) { ?>
-          <option value="<?php echo $month['value']; ?>"><?php echo $month['text']; ?></option>
-          <?php } ?>
-        </select>
-      </div>
-      <div class="col-sm-3 required">
-        <select name="cc_year" class="form-control">
-          <?php foreach ($year_valid as $year) { ?>
-          <option value="<?php echo $year['value']; ?>"><?php echo $year['text']; ?></option>
-          <?php } ?>
-        </select>
-      </div>
-    </div>
-    <div class="form-group required">
-      <label class="col-sm-2 control-label" for="input-cc-cvv2"><?php echo $entry_cc_cvc; ?></label>
-      <div class="col-sm-6">
-        <input type="text" name="cc_cvc" value="" placeholder="<?php echo $entry_cc_cvc; ?>" id="input-cc-cvc" class="form-control" />
-      </div>
-      <div class="col-sm-4"></div>
-    </div>
 
-    <div class="form-group installments-wrapper">
-      <label class="col-sm-2 control-label" for="input-cc-start-date"><?php echo $text_installments; ?></label>
-      <div class="col-sm-6">
-          <div id="installment_table_id">
-              <div class="installmet_head">
-                  <div class="install_head_label add_space"><img style="display: none" class="bank_photo" data-src="<?php echo $payfull_banks_images; ?>" src=""></div>
-                  <div class="install_head_label"><?php echo $entry_payfull_installmet; ?></div>
-                  <div class="install_head_label"><?php echo $entry_payfull_amount; ?></div>
-                  <div class="install_head_label"><?php echo $entry_payfull_total; ?></div>
-              </div>
-              <div class="installment_body" id="installment_body">
-                  <div class="installment_row">
-                      <div class="install_body_label installment_radio"><input rel="1" type="radio" class="installment_radio" checked name="installments" value="1" /></div>
-                      <div class="install_body_label installment_lable_code"><?php echo $text_one_shot; ?></div>
-                      <div class="install_body_label"><?php echo $total; ?></div>
-                      <div class="install_body_label final_commi_price" rel="<?php echo $total; ?>"><?php echo $total; ?></div>
+
+    <?php if($payfull_bkm_status):?>
+      <ul class="tab">
+          <li><a href="javascript:void(0)" class="tablinks active" onclick="openPaymentMethod(event, 'cardPaymentMethod')"><?php echo $text_credit_card; ?></a></li>
+          <li><a href="javascript:void(0)" class="tablinks bkmTab" onclick="openPaymentMethod(event, 'bkmPaymentMethod')"><img class="bkmImage" src="<?php echo $payfull_banks_images; ?>/BKM.png"></a></li>
+      </ul>
+    <?php else:?>
+      <legend><?php echo $text_credit_card; ?></legend>
+    <?php endif;?>
+
+    <?php if($payfull_bkm_status):?>
+    <div class="tabcontent" id="cardPaymentMethod" style="display: block;">
+    <?php endif;?>
+        <div class="form-group required" >
+          <label class="col-sm-2 control-label" for="input-cc-type"><?php echo $entry_cc_name; ?></label>
+          <div class="col-sm-6">
+            <input type="text" name="cc_name" value="" placeholder="<?php echo $entry_cc_name; ?>" id="input-cc-name" class="form-control" />
+          </div>
+          <div class="col-sm-4"></div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="input-cc-number"><?php echo $entry_cc_number; ?></label>
+          <div class="col-sm-6">
+            <input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input-cc-number" class="input-cc-number-not-supported form-control" maxlength="16" />
+          </div>
+          <div class="col-sm-4"></div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="input-cc-start-date"><?php echo $entry_cc_date; ?></label>
+          <div class="col-sm-3">
+            <select name="cc_month" id="input-cc-start-date" class="form-control">
+              <?php foreach ($month_valid as $month) { ?>
+              <option value="<?php echo $month['value']; ?>"><?php echo $month['text']; ?></option>
+              <?php } ?>
+            </select>
+          </div>
+          <div class="col-sm-3 required">
+            <select name="cc_year" class="form-control">
+              <?php foreach ($year_valid as $year) { ?>
+              <option value="<?php echo $year['value']; ?>"><?php echo $year['text']; ?></option>
+              <?php } ?>
+            </select>
+          </div>
+        </div>
+        <div class="form-group required">
+          <label class="col-sm-2 control-label" for="input-cc-cvv2"><?php echo $entry_cc_cvc; ?></label>
+          <div class="col-sm-6">
+            <input type="text" name="cc_cvc" value="" placeholder="<?php echo $entry_cc_cvc; ?>" id="input-cc-cvc" class="form-control" />
+          </div>
+          <div class="col-sm-4"></div>
+        </div>
+        <div class="form-group installments-wrapper">
+          <label class="col-sm-2 control-label" for="input-cc-start-date"><?php echo $text_installments; ?></label>
+          <div class="col-sm-6">
+              <div id="installment_table_id">
+                  <div class="installmet_head">
+                      <div class="install_head_label add_space"><img style="display: none" class="bank_photo" data-src="<?php echo $payfull_banks_images; ?>" src=""></div>
+                      <div class="install_head_label"><?php echo $entry_payfull_installmet; ?></div>
+                      <div class="install_head_label"><?php echo $entry_payfull_amount; ?></div>
+                      <div class="install_head_label"><?php echo $entry_payfull_total; ?></div>
                   </div>
+                  <div class="installment_body" id="installment_body">
+                      <div class="installment_row">
+                          <div class="install_body_label installment_radio"><input rel="1" type="radio" class="installment_radio" checked name="installments" value="1" /></div>
+                          <div class="install_body_label installment_lable_code"><?php echo $text_one_shot; ?></div>
+                          <div class="install_body_label"><?php echo $total; ?></div>
+                          <div class="install_body_label final_commi_price" rel="<?php echo $total; ?>"><?php echo $total; ?></div>
+                      </div>
+                  </div>
+                  <div class="installment_footer"></div>
               </div>
-              <div class="installment_footer"></div>
           </div>
-      </div> 
-    </div>
-
-      <div class="form-group  extra_installments_container" style="display: none;">
-          <div class="col-sm-3 col-sm-offset-2">
-              <label><?php echo $text_extra_installments; ?></label>
-              <div class="extra_installments_select"></div>
+        </div>
+        <div class="form-group  extra_installments_container" style="display: none;">
+              <div class="col-sm-3 col-sm-offset-2">
+                  <label><?php echo $text_extra_installments; ?></label>
+                  <div class="extra_installments_select"></div>
+              </div>
+              <div class="col-sm-9 col-sm-offset-2">
+              </div>
           </div>
-          <div class="col-sm-9 col-sm-offset-2">
-          </div>
-      </div>
-
-    <input name="use3d" type="hidden" value="0" />
-
-    <div class="form-group use-3d-wrapper" style="<?php echo ($payfull_3dsecure_status==0)?'display: none':''; ?>">
+        <input name="use3d" type="hidden" value="0" />
+        <div class="form-group use-3d-wrapper" style="<?php echo ($payfull_3dsecure_status==0)?'display: none':''; ?>">
       <div class="col-sm-10 col-sm-offset-2">
       <div class="checkbox">
         <label><input name="use3d" id="use3d" type="checkbox" value="1"><?php echo $text_3d; ?></label>
       </div>
       </div>
     </div>
-
+        <?php if($payfull_bkm_status):?>
+        </div>
+        <div class="tabcontent" id="bkmPaymentMethod">
+            <p> <?php echo $text_bkm_explanation; ?></p>
+            <input id="useBKM" name="useBKM" type="hidden" value="0" />
+        </div>
+        <?php endif;?>
   </fieldset>
 </form>
 <div class="buttons">
@@ -320,6 +335,32 @@
         });
     }
 
+    function openPaymentMethod(evt, methodName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the link that opened the tab
+        document.getElementById(methodName).style.display = "block";
+        evt.currentTarget.className += " active";
+        if(methodName == 'bkmPaymentMethod'){
+            $('#useBKM').val(1);
+        }else{
+            $('#useBKM').val(0);
+        }
+    }
+
 //--></script>
 
 <style>
@@ -359,4 +400,47 @@
     color: white;
     text-transform: uppercase;
 }
+  /* Style the list */
+  ul.tab {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+  }
+
+  /* Float the list items side by side */
+  ul.tab li {float: left;}
+
+      /* Style the links inside the list items */
+  ul.tab li a {
+      display: inline-block;
+      color: black;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      transition: 0.3s;
+      font-size: 17px;
+  }
+
+  /* Change background color of links on hover */
+  ul.tab li a:hover {background-color: #ddd;}
+
+      /* Create an active/current tablink class */
+  ul.tab li a:focus, .active {background-color: #ccc;}
+
+      /* Style the tab content */
+  .tabcontent {
+      display: none;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-top: none;
+  }
+  .bkmImage {
+      max-width: 125px;
+  }
+  .bkmTab {
+      padding: 2px !important;
+  }
 </style>

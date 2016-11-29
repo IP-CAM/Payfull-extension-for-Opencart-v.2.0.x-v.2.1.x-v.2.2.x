@@ -25,6 +25,7 @@ $_['entry_endpoint'] 				= 'Bitiş Noktası';
 $_['entry_3dsecure_status'] 		= '3d güvenlik';
 $_['entry_installment_status'] 		= 'Taksitler';
 $_['entry_extra_installment_status']= 'Ekstra Taksitler(Vadaa)';
+$_['entry_bkm_status']              = 'BKM Express';
 
 // Help
 $_['help_total']					= 'The checkout total the order must reach before this payment method becomes active.';

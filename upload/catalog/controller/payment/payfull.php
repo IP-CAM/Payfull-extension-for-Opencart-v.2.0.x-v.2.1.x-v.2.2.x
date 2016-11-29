@@ -52,6 +52,8 @@ class ControllerPaymentPayfull extends Controller {
 		$data['text_wait'] = $this->language->get('text_wait');
 		$data['text_loading'] = $this->language->get('text_loading');
 		$data['text_one_shot'] = $this->language->get('text_one_shot');
+		$data['text_bkm'] = $this->language->get('text_bkm');
+		$data['text_bkm_explanation'] = $this->language->get('text_bkm_explanation');
 
         if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
             $base_url = $this->config->get('config_ssl');
@@ -59,6 +61,7 @@ class ControllerPaymentPayfull extends Controller {
             $base_url = $this->config->get('config_url');
         }
 
+		$data['payfull_bkm_status']      = $this->config->get('payfull_bkm_status');
 		$data['visa_img_path']           = $base_url.'image/payfull/payfull_creditcard_visa.png';
 		$data['master_img_path']         = $base_url.'image/payfull/payfull_creditcard_master.png';
 		$data['not_supported_img_path']  = $base_url.'image/payfull/payfull_creditcard_not_supported.png';
@@ -160,9 +163,6 @@ class ControllerPaymentPayfull extends Controller {
 				}
 			}
 		}
-
-
-
 
 		foreach($bank_info['installments'] as $justNormalKey=>$installment){
             if($installment['count'] == 1) continue;
@@ -399,6 +399,18 @@ class ControllerPaymentPayfull extends Controller {
         if(isset($this->request->post['use3d']) AND $this->request->post['use3d'] AND !$this->config->get('payfull_3dsecure_status')){
             $error['general_error'] = $this->language->get('entry_3d_not_available');
         }
+
+		if(isset($this->request->post['useBKM']) AND $this->request->post['useBKM'] AND !$this->config->get('payfull_bkm_status')){
+			$error['general_error'] = $this->language->get('entry_bkm_not_available');
+		}
+
+		if(isset($this->request->post['useBKM']) AND $this->request->post['useBKM'] AND $this->config->get('payfull_bkm_status')){
+			unset($error['cc_name']);
+			unset($error['cc_number']);
+			unset($error['cc_cvc']);
+			unset($error['cc_month']);
+			unset($error['cc_year']);
+		}
 
 		return $error;
 	}
