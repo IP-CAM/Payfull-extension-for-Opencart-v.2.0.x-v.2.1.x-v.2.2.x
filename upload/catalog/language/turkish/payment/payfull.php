@@ -13,12 +13,10 @@ $_['text_invalid_card'] = 'Hatalı Kart Numarası';
 $_['text_loading']      = 'Bekleyiniz';
 $_['text_one_shot']     = 'Tek Çekim';
 $_['text_bkm']          = 'BKM Express';
-$_['text_bkm_explanation']= '
-BKM Express is a payment system that makes online shopping fast,
-easy and joyful, developed with BKM, banks and leading companies of e-commerce area.
-Card owners can shop without sharing any card information online by saving their cards on BKM Express.
-The places of business that accept card on e-commerce websites can approach more customers as a Member Place of Business of BKM Express.
-';
+$_['text_bkm_explanation']= 'BKM Express ile ödeme yaparken www.bkmexpress.com.tr sayfasına yönlendirileceksiniz.
+                            BKM Express sitesine üye olurken kullandığınız kullanıcı adı ve şifreniz ile uygulamaya giriş yapmanız gerekmektedir.
+                            Karşınıza gelen ödeme ekranından işlem yapmak istediğiniz kartı ve ödeme şeklini seçerek kolayca ödeme yapabilirsiniz.
+                            Alışverişinizi tamamladıktan sonra otomatik olarak sitemize yönlendirileceksiniz.';
 
 $_['button_confirm']    = 'Ödemeyi Tamamla';
 

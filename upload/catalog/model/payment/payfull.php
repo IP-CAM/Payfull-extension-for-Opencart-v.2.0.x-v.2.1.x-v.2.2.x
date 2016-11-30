@@ -107,35 +107,61 @@ class ModelPaymentPayfull extends Model {
 			$user3d = 0;
 		}
 
-		$params = array(		    
-		    "type"            => 'Sale',
-		    "total"           => $total,
-		    "cc_name"         => isset($this->request->post['cc_name'])?$this->request->post['cc_name']:'',
-		    "cc_number"       => isset($this->request->post['cc_number'])?$this->request->post['cc_number']:'',
-		    "cc_month"        => isset($this->request->post['cc_month'])?$this->request->post['cc_month']:'',
-		    "cc_year"         => isset($this->request->post['cc_year'])?$this->request->post['cc_year']:'',
-		    "cc_cvc"          => isset($this->request->post['cc_cvc'])?$this->request->post['cc_cvc']:'',
+		$bkmExist = (isset($this->request->post['useBKM']) AND $this->request->post['useBKM']);
+		if($bkmExist){
+			$params = array(
+				"type"            => 'Sale',
+				"total"           => $total,
+				"currency"        => $order_info['currency_code'],
+				"language"        => 'tr',
+				"client_ip"       => $_SERVER['REMOTE_ADDR'],
+				"payment_title"   => 'Order #'.$order_info['order_id'],
+				"return_url"      => $this->url->link('payment/payfull/callback'),
+				"bank_id"         => 'BKMExpress',
 
-		    "currency"        => $order_info['currency_code'],
-		    "language"        => 'tr',
-		    "client_ip"       => $_SERVER['REMOTE_ADDR'],
-		    "payment_title"   => 'Order #'.$order_info['order_id'],
-		    "use3d"           => $user3d,
-		    "return_url"      => $this->url->link('payment/payfull/callback'),
-
-		    "customer_firstname" => $order_info['firstname'],
-		    "customer_lastname"  => $order_info['lastname'],
-		    "customer_email"     => $order_info['email'],
-		    "customer_phone"     => $order_info['telephone'],
+				"customer_firstname" => $order_info['firstname'],
+				"customer_lastname"  => $order_info['lastname'],
+				"customer_email"     => $order_info['email'],
+				"customer_phone"     => $order_info['telephone'],
 
 
-		    "passive_data"  => $order_info['order_id'],
-		);
+				"passive_data"  => $order_info['order_id'],
+			);
 
-		if(isset($this->request->post['installments'])) {
-			$params["installments"] = $this->request->post['installments'];
 		}else{
+			$params = array(
+				"type"            => 'Sale',
+				"total"           => $total,
+				"cc_name"         => isset($this->request->post['cc_name'])?$this->request->post['cc_name']:'',
+				"cc_number"       => isset($this->request->post['cc_number'])?$this->request->post['cc_number']:'',
+				"cc_month"        => isset($this->request->post['cc_month'])?$this->request->post['cc_month']:'',
+				"cc_year"         => isset($this->request->post['cc_year'])?$this->request->post['cc_year']:'',
+				"cc_cvc"          => isset($this->request->post['cc_cvc'])?$this->request->post['cc_cvc']:'',
+
+				"currency"        => $order_info['currency_code'],
+				"language"        => 'tr',
+				"client_ip"       => $_SERVER['REMOTE_ADDR'],
+				"payment_title"   => 'Order #'.$order_info['order_id'],
+				"use3d"           => $user3d,
+				"return_url"      => $this->url->link('payment/payfull/callback'),
+
+				"customer_firstname" => $order_info['firstname'],
+				"customer_lastname"  => $order_info['lastname'],
+				"customer_email"     => $order_info['email'],
+				"customer_phone"     => $order_info['telephone'],
+
+
+				"passive_data"  => $order_info['order_id'],
+			);
+		}
+
+
+		if(isset($this->request->post['installments']) AND !$bkmExist) {
+			$params["installments"] = $this->request->post['installments'];
+		}elseif(!$bkmExist){
 			$params["installments"] = 1;			
+		}else{
+			$params["installments"] = ($this->config->get('payfull_installment_status'))?1:0;
 		}
 		    
 		if(isset($this->session->data['bank_id']) AND $params["installments"] > 1){
