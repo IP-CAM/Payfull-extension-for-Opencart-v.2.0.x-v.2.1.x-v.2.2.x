@@ -81,7 +81,7 @@
               </div>
               <div class="col-sm-9 col-sm-offset-2">
               </div>
-          </div>
+        </div>
         <input name="use3d" type="hidden" value="0" />
         <div class="form-group use-3d-wrapper" style="<?php echo ($payfull_3dsecure_status==0)?'display: none':''; ?>">
       <div class="col-sm-10 col-sm-offset-2">

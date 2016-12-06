@@ -186,7 +186,8 @@ class ModelPaymentPayfull extends Model {
 		$params["merchant"] = $this->config->get('payfull_username');//[mandatory]
 
 		$api_url = $this->config->get('payfull_endpoint');
-		
+
+
 		//begin HASH calculation
 		ksort($params);
 		$hashString = "";
