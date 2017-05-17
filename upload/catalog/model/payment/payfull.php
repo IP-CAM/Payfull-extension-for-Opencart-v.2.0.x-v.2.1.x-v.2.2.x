@@ -188,15 +188,14 @@ class ModelPaymentPayfull extends Model {
 		$api_url = $this->config->get('payfull_endpoint');
 
 
-		//begin HASH calculation
-		ksort($params);
-		$hashString = "";
-		foreach ($params as $key=>$val) {
-		    $hashString .= strlen($val) . $val;
-		}
-
-		$params["hash"] = hash_hmac("sha1", $hashString, $merchantPassword);
-		//end HASH calculation
+        //begin HASH calculation
+        ksort($params);
+        $hashString = "";
+        foreach ($params as $key=>$val) {
+            $hashString .= mb_strlen($val) . $val;
+        }
+        $params["hash"] = hash_hmac("sha1", $hashString, $merchantPassword);
+        //end HASH calculation
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $api_url);
