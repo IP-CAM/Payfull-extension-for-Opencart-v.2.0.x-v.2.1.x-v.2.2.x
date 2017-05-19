@@ -1,13 +1,12 @@
 <form class="form-horizontal">
   <fieldset id="payment">
 
-
     <?php if($payfull_bkm_status):?>
-      <ul class="tab">
-          <li><a href="javascript:void(0)" class="tablinks active" onclick="openPaymentMethod(event, 'cardPaymentMethod')"><?php echo $text_credit_card; ?></a></li>
-          <li><a href="javascript:void(0)" class="tablinks bkmTab" onclick="openPaymentMethod(event, 'bkmPaymentMethod')"><img class="bkmImage" src="<?php echo $payfull_banks_images; ?>/BKM.png"></a></li>
+       <ul class="tab">
+          <li><a href="javascript:void(0)" class="tablinks active" onclick="openPaymentMethod(event, 'cardPaymentMethod')"><?php echo $text_credit_card; ?><img class="payfullImage" src="<?php echo $payfull_banks_images; ?>payfull-logo.png"></a></li>
+          <li><a href="javascript:void(0)" class="tablinks bkmTab" onclick="openPaymentMethod(event, 'bkmPaymentMethod')"><img class="bkmImage" src="<?php echo $payfull_banks_images; ?>BKM.png"></a></li>
       </ul>
-    <?php else:?>
+     <?php else:?>
       <legend><?php echo $text_credit_card; ?></legend>
     <?php endif;?>
 
@@ -82,14 +81,25 @@
               <div class="col-sm-9 col-sm-offset-2">
               </div>
         </div>
-        <input name="use3d" type="hidden" value="0" />
-        <div class="form-group use-3d-wrapper" style="<?php echo ($payfull_3dsecure_status==0)?'display: none':''; ?>">
-      <div class="col-sm-10 col-sm-offset-2">
-      <div class="checkbox">
-        <label><input name="use3d" id="use3d" type="checkbox" value="1"><?php echo $text_3d; ?></label>
-      </div>
-      </div>
-    </div>
+
+      <?php if($payfull_3dsecure_force_status) { ?>
+          <div class="form-group use-3d-wrapper">
+              <div class="col-sm-10 col-sm-offset-2">
+                  <div class="checkbox">
+                      <label><input data-forced="true" disabled="disabled" checked="checked" name="use3d" id="use3d" type="checkbox" value="1"><?php echo $text_3d; ?></label>
+                  </div>
+              </div>
+          </div>
+      <?php } else { ?>
+          <div class="form-group use-3d-wrapper">
+              <div class="col-sm-10 col-sm-offset-2">
+                  <div class="checkbox">
+                      <label><input data-forced="false" name="use3d" id="use3d" type="checkbox" value="1"><?php echo $text_3d; ?></label>
+                  </div>
+              </div>
+          </div>
+      <?php } ?>
+
         <?php if($payfull_bkm_status):?>
         </div>
         <div class="tabcontent" id="bkmPaymentMethod">
@@ -262,6 +272,17 @@
                         $options.append(getInstallementOption(count, installment_total, total, 0, json['bank_id'], hasExtra));
                     }
                 }
+
+                <?php if($payfull_3dsecure_force_debit) : ?>
+                  if(json['card_type']  != 'CREDIT' && $('#use3d').attr('data-forced') == 'false') {
+                    $('#use3d').attr('disabled', 'disabled');
+                    $('#use3d').prop("checked", true);
+                    $('#use3d').val(1);
+      
+                  } else if ($('#use3d').attr('data-forced') == 'false') {
+                    $('#use3d').removeAttr('disabled');
+                  }
+                <?php endif;?>
             }
         });
     };
@@ -418,10 +439,10 @@
       display: inline-block;
       color: black;
       text-align: center;
-      padding: 14px 16px;
+      padding: 8px;
       text-decoration: none;
       transition: 0.3s;
-      font-size: 17px;
+      font-size: 15px;
   }
 
   /* Change background color of links on hover */
@@ -439,8 +460,15 @@
   }
   .bkmImage {
       max-width: 125px;
+      margin-top: 10px;
+      margin-bottom: 5px;
   }
   .bkmTab {
       padding: 2px !important;
+  }
+    .payfullImage {
+      max-width: 120px;
+      display: block;
+      margin:0 auto;
   }
 </style>

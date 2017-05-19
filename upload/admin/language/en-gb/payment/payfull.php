@@ -25,6 +25,7 @@ $_['entry_no']						= 'No';
 $_['entry_endpoint'] 				= 'Endpoint';
 
 $_['entry_3dsecure_status'] 		= '3D Secure';
+$_['entry_3dsecure_force_status']	= 'Force 3D Secure';
 $_['entry_installment_status'] 		= 'Installments';
 $_['entry_extra_installment_status']= 'Extra Installments (Vadaa)';
 $_['entry_bkm_status']              = 'BKM Express';

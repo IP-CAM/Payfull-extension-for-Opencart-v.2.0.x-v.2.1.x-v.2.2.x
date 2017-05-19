@@ -52,6 +52,22 @@
           </div>
 
           <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-test"><?php echo $entry_3dsecure_force_status; ?>
+            </label>
+            <div class="col-sm-10">
+              <select class="form-control" name="payfull_3dsecure_force_status">
+                <?php if($payfull_3dsecure_force_status == 1) { ?>
+                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                <option value="0"><?php echo $text_disabled; ?></option>
+                <?php } else { ?>
+                <option value="1"><?php echo $text_enabled; ?></option>
+                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                <?php } ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
             <label class="col-sm-2 control-label" for="input-test"><?php echo $entry_installment_status; ?>
             </label>
             <div class="col-sm-10">

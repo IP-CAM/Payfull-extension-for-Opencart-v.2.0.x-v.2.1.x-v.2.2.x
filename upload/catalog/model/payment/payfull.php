@@ -1,7 +1,5 @@
 <?php
 
-set_time_limit(0);
-
 class ModelPaymentPayfull extends Model {
 
 	public function getInstallments(){
@@ -107,6 +105,19 @@ class ModelPaymentPayfull extends Model {
 			$user3d = 0;
 		}
 
+		$force3D = $this->config->get('payfull_3dsecure_force_status');
+        $user3d  = ($force3D)?1:$user3d;
+
+        if($this->config->get('payfull_3dsecure_force_debit')){
+            $cardInfo = $this->get_card_info();
+            $cardInfo = json_decode($cardInfo, true);
+
+            if($cardInfo['status']){
+                if($cardInfo['data']['type'] != 'CREDIT') $use3d = true;
+            }
+
+        }
+
 		$bkmExist = (isset($this->request->post['useBKM']) AND $this->request->post['useBKM']);
 		if($bkmExist){
 			$params = array(
@@ -192,7 +203,8 @@ class ModelPaymentPayfull extends Model {
         ksort($params);
         $hashString = "";
         foreach ($params as $key=>$val) {
-            $hashString .= mb_strlen($val) . $val;
+            $l = mb_strlen($val);
+            if($l) $hashString .= $l . $val;
         }
         $params["hash"] = hash_hmac("sha1", $hashString, $merchantPassword);
         //end HASH calculation
@@ -214,11 +226,6 @@ class ModelPaymentPayfull extends Model {
 
 		return $response;
 
-		/*echo '<pre>';
-		var_dump(($response));
-		var_dump(json_decode($response));
-		echo '</pre>';
-		die; */
 	}
 
 	public function getMethod($address, $total) {

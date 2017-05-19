@@ -66,6 +66,8 @@ class ControllerPaymentPayfull extends Controller {
 		$data['master_img_path']         = $base_url.'image/payfull/payfull_creditcard_master.png';
 		$data['not_supported_img_path']  = $base_url.'image/payfull/payfull_creditcard_not_supported.png';
         $data['payfull_3dsecure_status'] = $this->config->get('payfull_3dsecure_status');
+        $data['payfull_3dsecure_force_status'] = $this->config->get('payfull_3dsecure_force_status');
+        $data['payfull_3dsecure_force_debit'] = 1;
         $data['payfull_banks_images']    = $base_url.'image/payfull/';
 
 		$this->load->model('checkout/order');
@@ -118,13 +120,29 @@ class ControllerPaymentPayfull extends Controller {
 			$json['card_type'] = $card_info['data']['type'];
 		}
 
+		// we check if the origin of the network exist use it or use card issuer or anybank related with the network
+		$originFoundArr      = FALSE;
+		$cardIssuerArr       = FALSE;
+		$networkBankFoundArr = FALSE;
 		foreach($installments_info['data'] as $temp) {
-			if($temp['bank'] == $card_info['data']['bank_id']) {
-				$bank_info = $temp;
+			if($temp['bank'] == $card_info['data']['bankAcceptInstallments']['origin']) {
+                $originFoundArr = $temp;
 				break;
-			}
+			} elseif ($temp['bank'] == $card_info['data']['bank_id']){
+                $cardIssuerArr = $temp;
+            } elseif (array_search($temp['bank'], $card_info['data']['bankAcceptInstallments']['network'])) {
+                $networkBankFoundArr = $temp;
+            }
 		}
 
+		if($originFoundArr){
+            $bank_info = $originFoundArr;
+        }elseif($cardIssuerArr){
+            $bank_info = $cardIssuerArr;
+        }elseif($networkBankFoundArr){
+            $bank_info = $networkBankFoundArr;
+        }
+        
         //still there is no one shot commission
         if(!count($bank_info)) {
             header('Content-type: text/json');
@@ -397,7 +415,9 @@ class ControllerPaymentPayfull extends Controller {
         }
 
         if(isset($this->request->post['use3d']) AND $this->request->post['use3d'] AND !$this->config->get('payfull_3dsecure_status')){
-            $error['general_error'] = $this->language->get('entry_3d_not_available');
+            if(!$this->config->get('payfull_3dsecure_force_debit')){
+           		$error['general_error'] = $this->language->get('entry_3d_not_available');
+           	}
         }
 
 		if(isset($this->request->post['useBKM']) AND $this->request->post['useBKM'] AND !$this->config->get('payfull_bkm_status')){

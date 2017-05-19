@@ -25,6 +25,7 @@ $_['entry_no']						= 'Hayır';
 $_['entry_endpoint'] 				= "Api URL'i";
 
 $_['entry_3dsecure_status'] 		= '3D Güvenlik';
+$_['entry_3dsecure_force_status']   = '3D Güvenliği Zorunlu Tut';
 $_['entry_installment_status'] 		= 'Taksitler';
 $_['entry_extra_installment_status']= 'Ekstra Taksitler(Vadaa)';
 $_['entry_bkm_status']              = 'BKM Express';

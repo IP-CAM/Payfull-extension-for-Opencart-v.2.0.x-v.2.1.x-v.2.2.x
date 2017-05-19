@@ -37,6 +37,7 @@ class ControllerPaymentPayfull extends Controller {
 		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
 
 		$data['entry_3dsecure_status'] = $this->language->get('entry_3dsecure_status');
+		$data['entry_3dsecure_force_status'] = $this->language->get('entry_3dsecure_force_status');
 		$data['entry_installment_status'] = $this->language->get('entry_installment_status');
 		$data['entry_extra_installment_status'] = $this->language->get('entry_extra_installment_status');
 		$data['entry_bkm_status'] = $this->language->get('entry_bkm_status');
@@ -84,6 +85,12 @@ class ControllerPaymentPayfull extends Controller {
 		} else {
 			$data['payfull_3dsecure_status'] = $this->config->get('payfull_3dsecure_status');
 		}
+
+		if (isset($this->request->post['payfull_3dsecure_force_status'])) {
+            $data['payfull_3dsecure_force_status'] = $this->request->post['payfull_3dsecure_force_status'];
+        } else {
+            $data['payfull_3dsecure_force_status'] = $this->config->get('payfull_3dsecure_force_status');
+        }
 
 		if (isset($this->request->post['payfull_installment_status'])) {
 			$data['payfull_installment_status'] = $this->request->post['payfull_installment_status'];
