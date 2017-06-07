@@ -1,42 +1,40 @@
-<form class="form-horizontal">
+<form class="form-horizontal" id="pf_checkout">
   <fieldset id="payment">
-
     <?php if($payfull_bkm_status):?>
-       <ul class="tab">
+       <ul class="tab" id="pf_yesbkmTitle">
           <li><a href="javascript:void(0)" class="tablinks active" onclick="openPaymentMethod(event, 'cardPaymentMethod')"><?php echo $text_credit_card; ?><img class="payfullImage" src="<?php echo $payfull_banks_images; ?>payfull-logo.png"></a></li>
           <li><a href="javascript:void(0)" class="tablinks bkmTab" onclick="openPaymentMethod(event, 'bkmPaymentMethod')"><img class="bkmImage" src="<?php echo $payfull_banks_images; ?>BKM.png"></a></li>
       </ul>
      <?php else:?>
-      <legend><?php echo $text_credit_card; ?><img class="payfullLogoCh" src="<?php echo $payfull_banks_images; ?>payfull-logo.png"></legend>
+      <legend id="pf_noBkmTitle"><?php echo $text_credit_card; ?><img class="payfullLogoCh" src="<?php echo $payfull_banks_images; ?>payfull-logo.png"></legend>
     <?php endif;?>
 
     <?php if($payfull_bkm_status):?>
     <div class="tabcontent" id="cardPaymentMethod" style="display: block;">
     <?php endif;?>
-        <div class="form-group required" >
-          <label class="col-sm-2 control-label" for="input-cc-type"><?php echo $entry_cc_name; ?></label>
-          <div class="col-sm-6">
+        <div class="formLine required" >
+          <label class="pf_width_3 control-label" for="input-cc-type"><?php echo $entry_cc_name; ?></label>
+          <div class="pf_width_6">
             <input type="text" name="cc_name" value="" placeholder="<?php echo $entry_cc_name; ?>" id="input-cc-name" class="form-control" />
           </div>
-          <div class="col-sm-4"></div>
         </div>
-        <div class="form-group required">
-          <label class="col-sm-2 control-label" for="input-cc-number"><?php echo $entry_cc_number; ?></label>
-          <div class="col-sm-6">
+        <div class="formLine required">
+          <label class="pf_width_3 control-label" for="input-cc-number" id="pf_cc_label"><?php echo $entry_cc_number; ?></label>
+          <div class="pf_width_6">
             <input type="text" name="cc_number" value="" placeholder="<?php echo $entry_cc_number; ?>" id="input-cc-number" class="input-cc-number-not-supported form-control" maxlength="16" />
           </div>
           <div class="col-sm-4"></div>
         </div>
-        <div class="form-group required">
-          <label class="col-sm-2 control-label" for="input-cc-start-date"><?php echo $entry_cc_date; ?></label>
-          <div class="col-sm-3">
+        <div class="formLine required">
+          <label class="pf_width_3 control-label" for="input-cc-start-date"><?php echo $entry_cc_date; ?></label>
+          <div class="pf_width_3">
             <select name="cc_month" id="input-cc-start-date" class="form-control">
               <?php foreach ($month_valid as $month) { ?>
               <option value="<?php echo $month['value']; ?>"><?php echo $month['text']; ?></option>
               <?php } ?>
             </select>
           </div>
-          <div class="col-sm-3 required">
+          <div class="pf_width_3 required">
             <select name="cc_year" class="form-control">
               <?php foreach ($year_valid as $year) { ?>
               <option value="<?php echo $year['value']; ?>"><?php echo $year['text']; ?></option>
@@ -44,16 +42,15 @@
             </select>
           </div>
         </div>
-        <div class="form-group required">
-          <label class="col-sm-2 control-label" for="input-cc-cvv2"><?php echo $entry_cc_cvc; ?></label>
-          <div class="col-sm-6">
+        <div class="formLine required">
+          <label class="pf_width_3 control-label" for="input-cc-cvv2"><?php echo $entry_cc_cvc; ?></label>
+          <div class="pf_width_6">
             <input type="text" name="cc_cvc" value="" placeholder="<?php echo $entry_cc_cvc; ?>" id="input-cc-cvc" class="form-control" />
           </div>
-          <div class="col-sm-4"></div>
         </div>
-        <div class="form-group installments-wrapper">
-          <label class="col-sm-2 control-label" for="input-cc-start-date"><?php echo $text_installments; ?></label>
-          <div class="col-sm-6">
+        <div class="formLine installments-wrapper">
+          <label class="pf_width_3 control-label" for="input-cc-start-date" id="pf_installment_label"><?php echo $text_installments; ?></label>
+          <div class="pf_width_6">
               <div id="installment_table_id">
                   <div class="installmet_head">
                       <div class="install_head_label add_space"><img style="display: none" class="bank_photo" data-src="<?php echo $payfull_banks_images; ?>" src=""></div>
@@ -73,7 +70,7 @@
               </div>
           </div>
         </div>
-        <div class="form-group  extra_installments_container" style="display: none;">
+        <div class="formLine extra_installments_container" style="display: none;">
               <div class="col-sm-3 col-sm-offset-2">
                   <label><?php echo $text_extra_installments; ?></label>
                   <div class="extra_installments_select"></div>
@@ -83,16 +80,16 @@
         </div>
 
       <?php if($payfull_3dsecure_force_status) { ?>
-          <div class="form-group use-3d-wrapper">
-              <div class="col-sm-10 col-sm-offset-2">
+          <div class="formLine use-3d-wrapper">
+              <div class="pf_width_9 pf_offset_3">
                   <div class="checkbox">
                       <label><input data-forced="true" disabled="disabled" checked="checked" name="use3d" id="use3d" type="checkbox" value="1"><?php echo $text_3d; ?></label>
                   </div>
               </div>
           </div>
       <?php } else { ?>
-          <div class="form-group use-3d-wrapper">
-              <div class="col-sm-10 col-sm-offset-2">
+          <div class="formLine use-3d-wrapper">
+              <div class="pf_width_9 pf_offset_3">
                   <div class="checkbox">
                       <label><input data-forced="false" name="use3d" id="use3d" type="checkbox" value="1"><?php echo $text_3d; ?></label>
                   </div>
@@ -385,95 +382,48 @@
 //--></script>
 
 <style>
-  .input-cc-number-visa {
-    background: rgba(0, 0, 0, 0) url("<?php echo $visa_img_path; ?>") no-repeat scroll right center / 12% auto;
-    float: left;
-  }
+    #pf_checkout{max-width:1100px}
+    #payment{width:100%!important}
+    #pf_noBkmTitle{width:100%;margin-bottom:20px;padding:7px 0;display:block;border-bottom:1px solid #e5e5e5;font-size:18px;line-height:inherit;color:#333;border:0}
+    .payfullLogoCh{max-width:140px;margin-left:15px}
+    #pf_yesbkmTitle{list-style-type:none;margin:0;padding:0;overflow:hidden;border:1px solid #ccc;background-color:#f1f1f1}
+    #pf_yesbkmTitle li{width:20%}
+    #pf_yesbkmTitle li a{display:inline-block;color:#000;text-align:center;padding:8px 12%;text-decoration:none;transition:.3s;font-size:16px}
+    .bkmImage{max-width:125px;margin-top:3px}
+    .bkmTab{padding:8px 21%!important}
+    .tabcontent{display:none;width:100%;padding:6px 12px;border:1px solid #ccc;border-top:none;float:left}
+    .formLine{display:block;width:100%;min-height:45px}
+    .pf_width_3{width:25%;display:inline-block;padding-right:5px}
+    .pf_width_4{width:33.3%;display:inline-block}
+    .pf_width_6{width:50%;display:inline-block}
+    .pf_width_8{width:66.6%;display:inline-block}
+    .pf_width_9{width:75%;display:inline-block}
+    .pf_width_10{width:83.3%;display:inline-block}
+    .pf_offset_3{margin-left:25%}
+    .installments-wrapper{margin-top:20px}
+    .installments-wrapper label{float:left}
+    #pf_cc_label{float:left}
+    #installment_table_id{background-color:#eee;border:1px solid;border-radius:5px;padding:10px}
+    .input-cc-number-visa{background:rgba(0,0,0,0) url("<?php echo $visa_img_path; ?>") no-repeat scroll right center / 12% auto;float:left}
+    .input-cc-number-master{background:rgba(0,0,0,0) url("<?php echo $master_img_path; ?>") no-repeat scroll right center / 12% auto;float:left}
+    .input-cc-number-not-supported{background:rgba(0,0,0,0) url("<?php echo $not_supported_img_path; ?>") no-repeat scroll right center / 8% auto;float:left}
+    #pf_installment_label{padding: 0 5px 0 0}
+    .card_loder > img{display:inline;vertical-align:middle;width:25px}
+    .card_image > img{display:inline-block;width:auto;height:25px;vertical-align:middle}
+    .card_image{display:inline-block;padding:0 5px;vertical-align:bottom}
+    .toatl_label h3{margin:15px 0 0}
+    .install_body_label{float:left;width:30%;height:40px;text-align:center;border-bottom:1px solid #d2d2d2;line-height:40px}
+    .install_body_label.installment_radio,.installmet_head .install_head_label.add_space{height:40px;text-align:center;width:10%;line-height:40px}
 
-  .input-cc-number-master {
-    background: rgba(0, 0, 0, 0) url("<?php echo $master_img_path; ?>") no-repeat scroll right center / 12% auto;
-    float: left;
-  }
-
-  .input-cc-number-not-supported {
-    background: rgba(0, 0, 0, 0) url("<?php echo $not_supported_img_path; ?>") no-repeat scroll right center / 8% auto;
-    float: left;
-  }
-
-
-.card_loder > img {display: inline;vertical-align: middle;width: 25px;}
-.card_image > img {display: inline-block;width: auto;height:25px;vertical-align: middle;}
-.card_image { display: inline-block;  padding:0 5px;vertical-align: bottom;}
-.toatl_label h3 {margin: 15px 0 0 0;}
-.install_body_label {float: left;width: 30%;height: 40px;text-align: center; border-bottom: 1px solid #d2d2d2;line-height: 40px;}
-.installment_row {/* padding-top: 10px;*/}
-.install_body_label.installment_radio, .installmet_head .install_head_label.add_space {height: 40px;text-align: center;width: 10%;line-height: 40px;}
-#installment_table_id {background-color: #eee;border: 1px solid;border-radius: 5px;padding: 10px;margin-top: 20px;}
-.installmet_head .install_head_label {float: left;font-weight: bold;text-align: center;width: 30%; height: 40px;line-height: 40px;border-bottom: 2px solid #d2d2d2; }
-.installment_body , .installment_footer {  clear: both; }
-.toatl_label {display:  none;}
-.bank_photo {height: 32px !important;}
-.joker {
-    border-radius: 25px;
-    font-weight: 600;
-    padding: 3px 10px;
-    background: #ff9800;
-    color: white;
-    text-transform: uppercase;
-}
-  /* Style the list */
-  ul.tab {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      border: 1px solid #ccc;
-      background-color: #f1f1f1;
-  }
-
-  /* Float the list items side by side */
-  ul.tab li {float: left;}
-
-      /* Style the links inside the list items */
-  ul.tab li a {
-      display: inline-block;
-      color: black;
-      text-align: center;
-      padding: 8px;
-      text-decoration: none;
-      transition: 0.3s;
-      font-size: 15px;
-  }
-
-  /* Change background color of links on hover */
-  ul.tab li a:hover {background-color: #ddd;}
-
-      /* Create an active/current tablink class */
-  ul.tab li a:focus, .active {background-color: #ccc;}
-
-      /* Style the tab content */
-  .tabcontent {
-      display: none;
-      padding: 6px 12px;
-      border: 1px solid #ccc;
-      border-top: none;
-  }
-  .bkmImage {
-      max-width: 125px;
-      margin-top: 10px;
-      margin-bottom: 5px;
-  }
-  .bkmTab {
-      padding: 2px !important;
-  }
-    .payfullImage {
-      max-width: 120px;
-      display: block;
-      margin:0 auto;
-  }
-
-  .payfullLogoCh {
-      max-width: 140px;
-      margin-left: 15px;
-  }
+    .installmet_head .install_head_label{float:left;font-weight:700;text-align:center;width:30%;height:40px;line-height:40px;border-bottom:2px solid #d2d2d2}
+    .installment_body,.installment_footer{clear:both}
+    .toatl_label{display:none}
+    .bank_photo{height:32px!important}
+    .joker{border-radius:25px;font-weight:600;padding:3px 10px;background:#ff9800;color:#fff;text-transform:uppercase}
+    ul.tab{list-style-type:none;margin:0;padding:0;overflow:hidden;border:1px solid #ccc;background-color:#f1f1f1}
+    ul.tab li{float:left}
+    ul.tab li a{display:inline-block;color:#000;text-align:center;padding:8px;text-decoration:none;transition:.3s;font-size:15px}
+    ul.tab li a:hover{background-color:#ddd}
+    ul.tab li a:focus,.active{background-color:#ccc}
+    .payfullImage{max-width:120px;display:block;margin:0 auto}
 </style>
