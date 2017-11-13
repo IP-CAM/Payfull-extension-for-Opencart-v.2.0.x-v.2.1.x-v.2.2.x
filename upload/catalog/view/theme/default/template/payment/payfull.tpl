@@ -1,7 +1,5 @@
 <form class="form-horizontal">
   <fieldset id="payment">
-
-
     <?php if($payfull_bkm_status):?>
       <ul class="tab">
           <li><a href="javascript:void(0)" class="tablinks active" onclick="openPaymentMethod(event, 'cardPaymentMethod')"><?php echo $text_credit_card; ?></a></li>
@@ -443,4 +441,15 @@
   .bkmTab {
       padding: 2px !important;
   }
+
+    #input-cc-name, #input-cc-number{
+        width: 100%;
+        max-width: none !important;
+    }
+
+    fieldset#payment {
+        .col-sm-3 {
+            width: 25%;
+        }
+    }
 </style>
