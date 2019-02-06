@@ -194,7 +194,7 @@ class ModelPaymentPayfull extends Model {
         foreach ($params as $key=>$val) {
             $hashString .= mb_strlen($val) . $val;
         }
-        $params["hash"] = hash_hmac("sha1", $hashString, $merchantPassword);
+        $params["hash"] = hash_hmac("sha256", $hashString, $merchantPassword);
         //end HASH calculation
 
 		$ch = curl_init();
