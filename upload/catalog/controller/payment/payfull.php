@@ -512,7 +512,7 @@ class ControllerPaymentPayfull extends Controller {
 		foreach ($arr as $key=>$val) {
 			$hashString_char_count .= mb_strlen($val) . $val;
 		}
-		$hashString_char_count      = strtolower(hash_hmac("sha1", $hashString_char_count, $password));
+		$hashString_char_count      = strtolower(hash_hmac("sha256", $hashString_char_count, $password));
 		return $hashString_char_count;
 	}
 }
